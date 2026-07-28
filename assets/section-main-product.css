@@ -1944,38 +1944,28 @@ fieldset.product-form__input {
 
 /* --- Custom Reference Layout Overrides --- */
 @media screen and (max-width: 990px) {
-  /* Edge-to-edge product image */
-  #MainProduct-main.container {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    max-width: 100% !important;
+  /* Edge-to-edge product image using negative margins to break out of container */
+  .product__media-wrapper {
+    margin-left: calc(-1 * var(--main-padding)) !important;
+    margin-right: calc(-1 * var(--main-padding)) !important;
+    width: calc(100% + (2 * var(--main-padding))) !important;
+    max-width: none !important;
   }
   
-  .product__info-wrapper {
-    padding-left: 20px !important;
-    padding-right: 20px !important;
-  }
-  
-  /* Show thumbnails on mobile for thumbnail_slider */
-  .product__media-list-wrapper .product__media-sublist {
-    display: block !important;
-    margin-top: 15px !important;
-  }
-  
-  /* Keep thumbnail aspect ratio and width */
-  .product__media-subitem .product__media {
-    padding-top: 100% !important;
-  }
-  .product__media-sublist .product__media-subitem {
-    width: 22% !important;
-    margin-right: 8px !important;
-  }
-
-  /* Hide arrows and fractions */
+  /* Hide ALL arrows and fractions on mobile galleries globally */
   .product__media-list-wrapper .swiper-btn,
   .product__media-list-wrapper .swiper-pagination-fraction,
+  .product__media-list-wrapper .product-media-sublist-count,
   .product__media-list-wrapper .product__button-prev,
-  .product__media-list-wrapper .product__button-next {
+  .product__media-list-wrapper .product__button-next,
+  .product__media-list-wrapper-mobile .swiper-btn,
+  .product__media-list-wrapper-mobile .swiper-pagination-fraction,
+  .product__media-list-wrapper-mobile .product-media-sublist-count {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    position: absolute !important;
   }
 }
