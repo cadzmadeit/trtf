@@ -25,6 +25,50 @@
 	}
 {% endif %}
 
+  /* --- NUCLEAR MOBILE LAYOUT OVERRIDES --- */
+  @media screen and (max-width: 990px) {
+    /* 1. Edge-to-edge product image */
+    #MainProduct-{{ section.id }}.container {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      max-width: 100% !important;
+    }
+    #MainProduct-{{ section.id }} .product__outer {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      width: 100% !important;
+    }
+    #MainProduct-{{ section.id }} .product__media-wrapper {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    #MainProduct-{{ section.id }} .product__info-wrapper {
+      padding-left: 20px !important;
+      padding-right: 20px !important;
+    }
+
+    /* 2. Absolute Annihilation of Arrows and Fractions */
+    #MainProduct-{{ section.id }} .swiper-btn,
+    #MainProduct-{{ section.id }} .swiper-btn--prev,
+    #MainProduct-{{ section.id }} .swiper-btn--next,
+    #MainProduct-{{ section.id }} .swiper-button-prev,
+    #MainProduct-{{ section.id }} .swiper-button-next,
+    #MainProduct-{{ section.id }} .product__button-prev,
+    #MainProduct-{{ section.id }} .product__button-next,
+    #MainProduct-{{ section.id }} .product-media-sublist-count,
+    #MainProduct-{{ section.id }} .swiper-pagination-fraction {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      width: 0 !important;
+      height: 0 !important;
+      position: absolute !important;
+      pointer-events: none !important;
+      z-index: -999 !important;
+    }
+  }
 {%- endstyle -%}
 
 {%- assign first_3d_model = product.media | where: "media_type", "model" | first -%}
