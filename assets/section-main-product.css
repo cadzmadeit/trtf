@@ -1941,3 +1941,37 @@ fieldset.product-form__input {
 .product__tax a:not([disabled]):not([aria-disabled=true]):hover::after {
   width: 0;
 }
+
+/* --- Custom Reference Layout Overrides --- */
+@media screen and (max-width: 990px) {
+  /* Edge-to-edge product image */
+  .section-main-product-padding.container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    max-width: 100% !important;
+  }
+  
+  .product__info-wrapper {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  
+  /* Show thumbnails on mobile for thumbnail_slider */
+  .product__media-list-wrapper .product__media-sublist {
+    display: block !important;
+    margin-top: 15px !important;
+  }
+  
+  /* Keep thumbnail aspect ratio */
+  .product__media-subitem .product__media {
+    padding-top: 100% !important;
+  }
+
+  /* Hide arrows and fractions */
+  .product__media-list-wrapper .swiper-btn,
+  .product__media-list-wrapper .swiper-pagination-fraction,
+  .product__media-list-wrapper .product__button-prev,
+  .product__media-list-wrapper .product__button-next {
+    display: none !important;
+  }
+}
