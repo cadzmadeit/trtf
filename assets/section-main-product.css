@@ -1941,3 +1941,63 @@ fieldset.product-form__input {
 .product__tax a:not([disabled]):not([aria-disabled=true]):hover::after {
   width: 0;
 }
+/* --- Custom Reference Layout Overrides --- */
+@media screen and (max-width: 990px) {
+  /* 1. Make product image edge-to-edge */
+  .section-main-product-padding.container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  .product__info-wrapper {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+  
+  /* 2. Enable and style mobile thumbnails */
+  .product__media-sublist,
+  .product__media-list-wrapper.product__media-list-wrapper-mobile .product__media-subitem {
+    display: block !important;
+    opacity: 1 !important;
+  }
+  
+  .product__media-list-wrapper.product__media-list-wrapper-mobile {
+    flex-direction: column !important;
+  }
+  
+  .product__media-sublist {
+    order: 2 !important; /* Move under main image */
+    margin-top: 15px !important;
+  }
+  
+  /* Make thumbnails a horizontal scrollable row */
+  .product__media-sublist .swiper-wrapper {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    overflow-x: auto !important;
+    padding: 0 2rem !important;
+    scrollbar-width: none;
+    flex-wrap: nowrap !important;
+  }
+  .product__media-sublist .swiper-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .product__media-subitem {
+    flex: 0 0 calc(20% - 8px) !important;
+    margin-bottom: 0 !important;
+    height: auto !important;
+    padding: 0 !important;
+  }
+  
+  .product__media-subitem .product__media {
+    padding-top: 100% !important;
+  }
+  
+  /* 3. Hide side arrows and pagination fraction on main image */
+  .product__media-list .swiper-btn,
+  .product__media-list .swiper-pagination-fraction {
+    display: none !important;
+  }
+}

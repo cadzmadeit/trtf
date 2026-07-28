@@ -1,0 +1,51 @@
+{% schema %}
+{
+  "name": "Product Perks Banner",
+  "settings": [
+    {
+      "type": "text",
+      "id": "banner_text",
+      "label": "Banner Text",
+      "default": "Worldwide Shipping | 14-Day Returns"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#f4f4f4"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Perks Banner"
+    }
+  ]
+}
+{% endschema %}
+
+<div class="product-perks-banner" style="background-color: {{ section.settings.bg_color }};">
+  <div class="product-perks-banner__text" style="color: {{ section.settings.text_color }};">
+    {{ section.settings.banner_text }}
+  </div>
+</div>
+
+<style>
+  .product-perks-banner {
+    width: 100%;
+    padding: 10px 0;
+    text-align: center;
+    border-bottom: 1px solid #eaeaea;
+  }
+  .product-perks-banner__text {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+</style>
