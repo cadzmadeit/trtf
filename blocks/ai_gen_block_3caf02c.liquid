@@ -1,0 +1,195 @@
+{% doc %}
+  @prompt
+    Create a complete Liquid snippet named live-viewer-counter.liquid that displays "Currently viewing: [number] people" with a light blue bullet point (•) before the text. The bullet should be light blue (#87CEEB), the text "Currently viewing:" should be dark gray/black, and the number should be red (#FF0000). Style it to look clean and minimal like a product page element. On page load show a random number between 19-40, then every 15-30 seconds update to a new random number with smooth fade-out/fade-in CSS opacity transition. Include all HTML, CSS, and JavaScript in one self-contained snippet file., the numbers are not popping up, the space between the numbers and people is too short, and tailor the section to be centred in mobile and desktop screens
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .live-viewer-counter-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 10px 0;
+  }
+
+  .live-viewer-counter-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+  }
+
+  .live-viewer-counter-{{ ai_gen_id }}.fade {
+    opacity: 0;
+  }
+
+  .live-viewer-counter-bullet-{{ ai_gen_id }} {
+    color: {{ block.settings.bullet_color }};
+    font-size: 18px;
+    margin-right: 6px;
+  }
+
+  .live-viewer-counter-text-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+  }
+
+  .live-viewer-counter-number-{{ ai_gen_id }} {
+    color: {{ block.settings.number_color }};
+    font-weight: 600;
+    margin: 0 6px;
+  }
+{% endstyle %}
+
+<live-viewer-counter-{{ ai_gen_id }} {{ block.shopify_attributes }}>
+  <div class="live-viewer-counter-wrapper-{{ ai_gen_id }}">
+    <div class="live-viewer-counter-{{ ai_gen_id }}">
+      <span class="live-viewer-counter-bullet-{{ ai_gen_id }}">•</span>
+      <span class="live-viewer-counter-text-{{ ai_gen_id }}">{{ block.settings.prefix_text }}</span>
+      <span class="live-viewer-counter-number-{{ ai_gen_id }}"></span>
+      <span class="live-viewer-counter-text-{{ ai_gen_id }}">{{ block.settings.suffix_text }}</span>
+    </div>
+  </div>
+</live-viewer-counter-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class LiveViewerCounter{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.counterElement = this.querySelector('.live-viewer-counter-{{ ai_gen_id }}');
+        this.numberElement = this.querySelector('.live-viewer-counter-number-{{ ai_gen_id }}');
+        this.minValue = {{ block.settings.min_viewers }};
+        this.maxValue = {{ block.settings.max_viewers }};
+        this.minInterval = {{ block.settings.min_interval }} * 1000;
+        this.maxInterval = {{ block.settings.max_interval }} * 1000;
+        this.currentNumber = this.getRandomNumber();
+      }
+
+      connectedCallback() {
+        this.updateCounter(this.currentNumber);
+        this.startCounterUpdates();
+      }
+
+      disconnectedCallback() {
+        if (this.updateTimeout) {
+          clearTimeout(this.updateTimeout);
+        }
+      }
+
+      getRandomNumber() {
+        return Math.floor(Math.random() * (this.maxValue - this.minValue + 1)) + this.minValue;
+      }
+
+      getRandomInterval() {
+        return Math.floor(Math.random() * (this.maxInterval - this.minInterval + 1)) + this.minInterval;
+      }
+
+      updateCounter(number) {
+        this.numberElement.textContent = number;
+      }
+
+      startCounterUpdates() {
+        const updateWithTransition = () => {
+          this.counterElement.classList.add('fade');
+          
+          setTimeout(() => {
+            this.currentNumber = this.getRandomNumber();
+            this.updateCounter(this.currentNumber);
+            
+            setTimeout(() => {
+              this.counterElement.classList.remove('fade');
+            }, 100);
+            
+            this.updateTimeout = setTimeout(updateWithTransition, this.getRandomInterval());
+          }, 500);
+        };
+        
+        this.updateTimeout = setTimeout(updateWithTransition, this.getRandomInterval());
+      }
+    }
+
+    customElements.define('live-viewer-counter-{{ ai_gen_id }}', LiveViewerCounter{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Live Viewer Counter",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "prefix_text",
+      "label": "Prefix text",
+      "default": "Currently viewing:"
+    },
+    {
+      "type": "text",
+      "id": "suffix_text",
+      "label": "Suffix text",
+      "default": "people"
+    },
+    {
+      "type": "range",
+      "id": "min_viewers",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 19,
+      "label": "Minimum viewers"
+    },
+    {
+      "type": "range",
+      "id": "max_viewers",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 40,
+      "label": "Maximum viewers"
+    },
+    {
+      "type": "range",
+      "id": "min_interval",
+      "min": 5,
+      "max": 60,
+      "step": 5,
+      "default": 15,
+      "label": "Minimum update interval (seconds)"
+    },
+    {
+      "type": "range",
+      "id": "max_interval",
+      "min": 5,
+      "max": 60,
+      "step": 5,
+      "default": 30,
+      "label": "Maximum update interval (seconds)"
+    },
+    {
+      "type": "color",
+      "id": "bullet_color",
+      "label": "Bullet point color",
+      "default": "#87CEEB"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "number_color",
+      "label": "Number color",
+      "default": "#FF0000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Live Viewer Counter"
+    }
+  ]
+}
+{% endschema %}

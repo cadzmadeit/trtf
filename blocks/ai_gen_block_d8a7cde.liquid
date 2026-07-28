@@ -1,0 +1,426 @@
+{% doc %}
+  @prompt
+    Create a complete Liquid snippet named live-viewer-counter.liquid that displays "Currently viewing: [number] people" with a light blue bullet point (•) before the text. The bullet should be light blue (#87CEEB), the text "Currently viewing:" should be dark gray/black, and the number should be red (#FF0000). Style it to look clean and minimal like a product page element. On page load show a random number between 19-40, then every 15-30 seconds update to a new random number with smooth fade-out/fade-in CSS opacity transition. Include all HTML, CSS, and JavaScript in one self-contained snippet file., the numbers are not popping up, the space between the numbers and people is too short, and tailor the section to be centred in mobile and desktop screens. make sure its the button layout so it has a light grey bacground thay slighty pops when hovered over. Add a top padding that is customizable and completely white, you forgot to add all the other customizable sections
+    
+    make the colors for everything customizable. make it the same style as my theme. very clean modern look ecom
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-viewer-counter-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    padding-top: {{ block.settings.top_padding }}px;
+    background-color: {{ block.settings.wrapper_background }};
+  }
+
+  .ai-viewer-counter-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    transition: all 0.3s ease;
+    cursor: default;
+    margin: 0 auto;
+    font-family: {{ block.settings.font.family }}, {{ block.settings.font.fallback_families }};
+    font-weight: {{ block.settings.font.weight }};
+    font-size: {{ block.settings.font_size }}px;
+    border: 1px solid {{ block.settings.border_color }};
+  }
+
+  .ai-viewer-counter-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.hover_background_color }};
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .ai-viewer-counter-container-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .ai-viewer-counter-bullet-{{ ai_gen_id }} {
+    color: {{ block.settings.bullet_color }};
+    font-size: {{ block.settings.bullet_size }}px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .ai-viewer-counter-text-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    white-space: nowrap;
+    letter-spacing: {{ block.settings.letter_spacing }}px;
+  }
+
+  .ai-viewer-counter-number-{{ ai_gen_id }} {
+    color: {{ block.settings.number_color }};
+    font-weight: {{ block.settings.number_font_weight }};
+    transition: opacity 0.3s ease;
+    display: inline-block;
+    min-width: 2ch;
+    text-align: center;
+  }
+
+  .ai-viewer-counter-number-{{ ai_gen_id }}.fade-out {
+    opacity: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-viewer-counter-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_font_size }}px;
+      padding: {{ block.settings.mobile_padding_vertical }}px {{ block.settings.mobile_padding_horizontal }}px;
+    }
+
+    .ai-viewer-counter-bullet-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_bullet_size }}px;
+    }
+  }
+{% endstyle %}
+
+<live-viewer-counter-{{ ai_gen_id }}
+  class="ai-viewer-counter-wrapper-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+  data-min="{{ block.settings.min_viewers }}"
+  data-max="{{ block.settings.max_viewers }}"
+  data-min-interval="{{ block.settings.min_update_interval }}"
+  data-max-interval="{{ block.settings.max_update_interval }}"
+>
+  <div class="ai-viewer-counter-container-{{ ai_gen_id }}">
+    <div class="ai-viewer-counter-{{ ai_gen_id }}">
+      <span class="ai-viewer-counter-bullet-{{ ai_gen_id }}">•</span>
+      <span class="ai-viewer-counter-text-{{ ai_gen_id }}">
+        {{ block.settings.prefix_text }}
+        <span class="ai-viewer-counter-number-{{ ai_gen_id }}">0</span>
+        {{ block.settings.suffix_text }}
+      </span>
+    </div>
+  </div>
+</live-viewer-counter-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class LiveViewerCounter{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.numberElement = null;
+        this.updateTimeout = null;
+      }
+
+      connectedCallback() {
+        this.numberElement = this.querySelector('.ai-viewer-counter-number-{{ ai_gen_id }}');
+        
+        const min = parseInt(this.dataset.min) || 19;
+        const max = parseInt(this.dataset.max) || 40;
+        
+        this.setRandomNumber(min, max);
+        this.scheduleNextUpdate();
+      }
+
+      disconnectedCallback() {
+        if (this.updateTimeout) {
+          clearTimeout(this.updateTimeout);
+        }
+      }
+
+      getRandomNumber(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      setRandomNumber(min, max) {
+        const newNumber = this.getRandomNumber(min, max);
+        this.numberElement.textContent = newNumber;
+      }
+
+      updateNumber() {
+        const min = parseInt(this.dataset.min) || 19;
+        const max = parseInt(this.dataset.max) || 40;
+        
+        this.numberElement.classList.add('fade-out');
+        
+        setTimeout(() => {
+          this.setRandomNumber(min, max);
+          this.numberElement.classList.remove('fade-out');
+        }, 300);
+      }
+
+      scheduleNextUpdate() {
+        const minInterval = parseInt(this.dataset.minInterval) || 15;
+        const maxInterval = parseInt(this.dataset.maxInterval) || 30;
+        const interval = this.getRandomNumber(minInterval, maxInterval) * 1000;
+        
+        this.updateTimeout = setTimeout(() => {
+          this.updateNumber();
+          this.scheduleNextUpdate();
+        }, interval);
+      }
+    }
+
+    customElements.define('live-viewer-counter-{{ ai_gen_id }}', LiveViewerCounter{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Live viewer counter",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "top_padding",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "prefix_text",
+      "label": "Prefix text",
+      "default": "Currently viewing:"
+    },
+    {
+      "type": "text",
+      "id": "suffix_text",
+      "label": "Suffix text",
+      "default": "people"
+    },
+    {
+      "type": "header",
+      "content": "Viewer count settings"
+    },
+    {
+      "type": "range",
+      "id": "min_viewers",
+      "label": "Minimum viewers",
+      "min": 1,
+      "max": 50,
+      "step": 1,
+      "default": 19
+    },
+    {
+      "type": "range",
+      "id": "max_viewers",
+      "label": "Maximum viewers",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "min_update_interval",
+      "label": "Minimum update interval",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "s",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "max_update_interval",
+      "label": "Maximum update interval",
+      "min": 15,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "wrapper_background",
+      "label": "Wrapper background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f6f6f6"
+    },
+    {
+      "type": "color",
+      "id": "hover_background_color",
+      "label": "Hover background",
+      "default": "#ececec"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#eaeaea"
+    },
+    {
+      "type": "color",
+      "id": "bullet_color",
+      "label": "Bullet",
+      "default": "#87CEEB"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#141414"
+    },
+    {
+      "type": "color",
+      "id": "number_color",
+      "label": "Number",
+      "default": "#FF0000"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "font_picker",
+      "id": "font",
+      "label": "Font",
+      "default": "inter_n4"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size (desktop)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "mobile_font_size",
+      "label": "Font size (mobile)",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "label": "Letter spacing",
+      "min": -1,
+      "max": 1,
+      "step": 0.1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "number_font_weight",
+      "label": "Number font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "header",
+      "content": "Bullet style"
+    },
+    {
+      "type": "range",
+      "id": "bullet_size",
+      "label": "Bullet size (desktop)",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_bullet_size",
+      "label": "Bullet size (mobile)",
+      "min": 10,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_vertical",
+      "label": "Mobile padding (vertical)",
+      "min": 6,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_horizontal",
+      "label": "Mobile padding (horizontal)",
+      "min": 10,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Live viewer counter"
+    }
+  ]
+}
+{% endschema %}

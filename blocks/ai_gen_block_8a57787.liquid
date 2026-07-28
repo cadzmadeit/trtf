@@ -1,0 +1,264 @@
+{% doc %}
+  @prompt
+    Create a "currently viewing" live visitor counter block that displays a message like "🔥 142 people are viewing this right now" where the number randomly fluctuates between a min and max range at a set interval. The number should animate/update smoothly. Style it as a compact, attention-grabbing badge or inline text suitable for a product page — use a warm color (red/orange) to create urgency. Include the following theme editor settings: (1) prefix text (e.g. "🔥" or emoji), (2) suffix text (e.g. "people are viewing this right now"), (3) minimum number (default 180), (4) maximum number (default 250), (5) update interval in seconds (default 3), (6) text color picker, (7) font size setting. All settings should be editable in the theme editor sidebar., make it centered, add a pulsing red dot, make the space between sections adjustable. make it say currently viewing: number of people., make the background color white, the text black, the number red, the text the same font as the theme. Make sure i can customize all colors
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-viewer-counter-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+  }
+
+  .ai-viewer-counter-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: {{ block.settings.vertical_spacing }}px 20px;
+    background-color: {{ block.settings.background_color }};
+    font-family: {{ block.settings.text_font.family }}, {{ block.settings.text_font.fallback_families }};
+    font-weight: {{ block.settings.text_font.weight }};
+    font-style: {{ block.settings.text_font.style }};
+  }
+
+  .ai-viewer-counter-pulse-{{ ai_gen_id }} {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    background-color: {{ block.settings.pulse_color }};
+    border-radius: 50%;
+    animation: ai-viewer-counter-pulse-animation-{{ ai_gen_id }} 2s ease-in-out infinite;
+  }
+
+  .ai-viewer-counter-pulse-{{ ai_gen_id }}::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background-color: {{ block.settings.pulse_color }};
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: ai-viewer-counter-pulse-ring-{{ ai_gen_id }} 2s ease-in-out infinite;
+  }
+
+  @keyframes ai-viewer-counter-pulse-animation-{{ ai_gen_id }} {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes ai-viewer-counter-pulse-ring-{{ ai_gen_id }} {
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(2);
+      opacity: 0;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0;
+    }
+  }
+
+  .ai-viewer-counter-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.font_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+    line-height: 1;
+  }
+
+  .ai-viewer-counter-prefix-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-viewer-counter-number-{{ ai_gen_id }} {
+    color: {{ block.settings.number_color }};
+    font-weight: 700;
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-viewer-counter-suffix-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+  }
+{% endstyle %}
+
+<viewer-counter-{{ ai_gen_id }}
+  class="ai-viewer-counter-{{ ai_gen_id }}"
+  data-min="{{ block.settings.min_viewers }}"
+  data-max="{{ block.settings.max_viewers }}"
+  data-interval="{{ block.settings.update_interval }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-viewer-counter-wrapper-{{ ai_gen_id }}">
+    <span class="ai-viewer-counter-pulse-{{ ai_gen_id }}"></span>
+    <p class="ai-viewer-counter-text-{{ ai_gen_id }}">
+      <span class="ai-viewer-counter-prefix-{{ ai_gen_id }}">{{ block.settings.prefix_text }}</span>
+      <span class="ai-viewer-counter-number-{{ ai_gen_id }}">{{ block.settings.min_viewers }}</span>
+      <span class="ai-viewer-counter-suffix-{{ ai_gen_id }}">{{ block.settings.suffix_text }}</span>
+    </p>
+  </div>
+</viewer-counter-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ViewerCounter{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.min = parseInt(this.dataset.min) || 180;
+        this.max = parseInt(this.dataset.max) || 250;
+        this.interval = parseInt(this.dataset.interval) || 3;
+        this.numberElement = this.querySelector('.ai-viewer-counter-number-{{ ai_gen_id }}');
+        this.currentNumber = this.min;
+      }
+
+      connectedCallback() {
+        this.updateNumber();
+        this.intervalId = setInterval(() => {
+          this.updateNumber();
+        }, this.interval * 1000);
+      }
+
+      disconnectedCallback() {
+        if (this.intervalId) {
+          clearInterval(this.intervalId);
+        }
+      }
+
+      updateNumber() {
+        const newNumber = Math.floor(Math.random() * (this.max - this.min + 1)) + this.min;
+        
+        if (newNumber !== this.currentNumber) {
+          this.numberElement.style.opacity = '0';
+          
+          setTimeout(() => {
+            this.currentNumber = newNumber;
+            this.numberElement.textContent = newNumber;
+            this.numberElement.style.opacity = '1';
+          }, 300);
+        }
+      }
+    }
+
+    customElements.define('viewer-counter-{{ ai_gen_id }}', ViewerCounter{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Live viewer counter",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "prefix_text",
+      "label": "Prefix text",
+      "default": "Currently viewing:"
+    },
+    {
+      "type": "text",
+      "id": "suffix_text",
+      "label": "Suffix text",
+      "default": "people"
+    },
+    {
+      "type": "range",
+      "id": "min_viewers",
+      "label": "Minimum viewers",
+      "min": 10,
+      "max": 500,
+      "step": 10,
+      "default": 180
+    },
+    {
+      "type": "range",
+      "id": "max_viewers",
+      "label": "Maximum viewers",
+      "min": 10,
+      "max": 500,
+      "step": 10,
+      "default": 250
+    },
+    {
+      "type": "range",
+      "id": "update_interval",
+      "label": "Update interval",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "font_picker",
+      "id": "text_font",
+      "label": "Font",
+      "default": "inter_n4"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "number_color",
+      "label": "Number color",
+      "default": "#ff0000"
+    },
+    {
+      "type": "color",
+      "id": "pulse_color",
+      "label": "Pulse dot color",
+      "default": "#ff0000"
+    },
+    {
+      "type": "range",
+      "id": "vertical_spacing",
+      "label": "Vertical spacing",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    }
+  ],
+  "presets": [
+    {
+      "name": "Live viewer counter"
+    }
+  ]
+}
+{% endschema %}

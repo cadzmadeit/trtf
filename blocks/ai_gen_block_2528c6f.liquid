@@ -1,0 +1,47 @@
+{% doc %}
+  @prompt
+    add the tiniest pixel of white space as a border between two sections make it adjustable, bacjground is white
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-section-divider-{{ ai_gen_id }} {
+    width: 100%;
+    height: {{ block.settings.divider_height }}px;
+    background-color: {{ block.settings.divider_color }};
+  }
+{% endstyle %}
+
+<div
+  class="ai-section-divider-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+></div>
+
+{% schema %}
+{
+  "name": "Section divider",
+  "settings": [
+    {
+      "type": "range",
+      "id": "divider_height",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Divider height",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Section divider"
+    }
+  ]
+}
+{% endschema %}

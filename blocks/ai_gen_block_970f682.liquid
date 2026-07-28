@@ -1,0 +1,1442 @@
+{% doc %}
+  @prompt
+    Create a premium responsive Featured Products carousel section inspired by modern luxury fashion websites. The layout should match a high-end editorial product slider with large product imagery, spacious product cards, clean typography, and smooth interactions similar to the reference design provided.
+    This should be a PRODUCT carousel section (not a featured collection grid) that pulls products from a selected collection while allowing users to horizontally scroll/swipe through all products. The carousel must feel smooth, modern, and optimized for both desktop and mobile.
+    Requirements:
+    
+    
+    Fully responsive layout
+    
+    
+    Large premium-style product cards
+    
+    
+    Horizontal sliding carousel
+    
+    
+    Smooth scrolling behavior
+    
+    
+    Desktop navigation arrows
+    
+    
+    Touch/swipe support on mobile
+    
+    
+    Mouse drag support on desktop
+    
+    
+    Ability to scroll through all products in the collection
+    
+    
+    Optimized loading and performance
+    
+    
+    No horizontal white-space overflow issues on mobile
+    
+    
+    Clean spacing and typography similar to premium streetwear/fashion stores
+    
+    
+    Product Card Features:
+    
+    
+    Large product image
+    
+    
+    Product title
+    
+    
+    Price
+    
+    
+    Compare-at price
+    
+    
+    Sale percentage or sale badge
+    
+    
+    Optional sold out badge
+    
+    
+    Hover animation
+    
+    
+    On hover, reveal the second product image if available
+    
+    
+    Smooth image zoom or fade transition on hover
+    
+    
+    Optional quick add to cart button
+    
+    
+    Optional wishlist icon
+    
+    
+    Fully clickable product card
+    
+    
+    Theme Editor Customization Settings:
+    
+    
+    Collection picker
+    
+    
+    Products per row (desktop/tablet/mobile)
+    
+    
+    Number of products to show
+    
+    
+    Product spacing
+    
+    
+    Card border radius
+    
+    
+    Section padding
+    
+    
+    Background color
+    
+    
+    Product title color
+    
+    
+    Price color
+    
+    
+    Compare-at price color
+    
+    
+    Sale badge colors
+    
+    
+    Arrow colors
+    
+    
+    Hover effect toggle
+    
+    
+    Autoplay toggle
+    
+    
+    Autoplay speed
+    
+    
+    Show/hide:
+    
+    
+    sale badges
+    
+    
+    compare-at prices
+    
+    
+    arrows
+    
+    
+    quick add button
+    
+    
+    vendor
+    
+    
+    product ratings
+    
+    
+    
+    
+    Design Requirements:
+    
+    
+    Match a premium luxury streetwear aesthetic
+    
+    
+    Large centered headings
+    
+    
+    Spacious layout
+    
+    
+    Clean typography
+    
+    
+    Smooth animations
+    
+    
+    Minimal but modern design
+    
+    
+    High-end mobile responsiveness
+    
+    
+    Cards should scale properly on all screen sizes
+    
+    
+    Prevent compressed product cards on mobile
+    
+    
+    Maintain smooth swipe behavior without lag
+    
+    
+    Carousel Behavior:
+    
+    
+    Smooth snapping scroll
+    
+    
+    Infinite-feeling navigation if possible
+    
+    
+    Arrow navigation on desktop
+    
+    
+    Swipe gestures on mobile
+    
+    
+    Drag-to-scroll support
+    
+    
+    Optional autoplay with pause on hover
+    
+    
+    Technical Requirements:
+    
+    
+    Shopify Online Store 2.0 compatible
+    
+    
+    Use schema settings for all customization
+    
+    
+    Highly optimized and lightweight
+    
+    
+    Lazy load images
+    
+    
+    Use responsive image sizing
+    
+    
+    Ensure accessibility support
+    
+    
+    Ensure no layout shifting
+    
+    
+    Maintain fast performance scores
+    
+    
+    The final result should feel like a premium fashion brand homepage carousel rather than a standard Shopify collection slider., Update the featured products carousel section with improved image scaling and hover-image sizing behavior.
+    
+    Currently the product images and especially the secondary hover image are too zoomed in on both desktop and mobile. The hover image should match the exact same scale, positioning, proportions, and framing as the primary product image.
+    
+    Make the following updates:
+    
+    Reduce overall image zoom/cropping inside product cards
+    Ensure both primary and secondary images use identical sizing and positioning
+    Prevent the hover image from appearing enlarged compared to the first image
+    Maintain full product visibility without cutting off hoodies/pants/etc.
+    Preserve product proportions naturally
+    Improve desktop image framing so products appear slightly smaller and more premium inside the card
+    Add more breathing room around products inside image containers
+    Ensure images remain centered vertically and horizontally
+    Keep image quality sharp while reducing crop intensity
+    
+    Image Behavior Requirements:
+    
+    Use a contain-style or softer cover-style fit instead of aggressive cropping
+    Maintain consistent aspect ratio across all products
+    Keep hover transitions smooth without scaling distortion
+    Remove any excessive zoom transform on hover
+    Product imagery should resemble luxury editorial fashion layouts with visible whitespace around garments
+    
+    Desktop Layout Improvements:
+    
+    Slightly reduce image size inside cards
+    Increase spacing between products slightly
+    Ensure products do not touch card edges
+    Maintain premium oversized layout while improving balance
+    
+    Mobile Improvements:
+    
+    Prevent image cutoff on smaller screens
+    Ensure hover/reveal image scales properly on tap/swipe devices
+    Keep cards clean and readable without oversized imagery
+    
+    Do NOT redesign the section — only refine and optimize the product image sizing, scaling, hover reveal behavior, and framing while preserving the existing carousel structure and styling, Update the featured products section so it no longer scrolls horizontally as a carousel. Instead, convert it into a vertically scrolling responsive products layout while keeping the same premium aesthetic, hover effects, animations, and product card design.
+    
+    The section should now behave like a luxury fashion product feed/grid rather than a horizontal slider.
+    
+    Main Changes:
+    
+    Remove horizontal scrolling completely
+    Products should stack naturally in rows and continue downward vertically
+    User should scroll down the page to see all products
+    Preserve the premium oversized product card design
+    Keep the same responsive behavior and clean spacing
+    Maintain smooth hover effects and second-image reveal
+    
+    Product Card Size Customization:
+    Add highly customizable controls for product card sizing directly in the Shopify theme editor.
+    
+    I want to be able to:
+    
+    Scale product cards by percentage
+    Control image size independently
+    Adjust product card width
+    Adjust product card height
+    Adjust content spacing
+    Adjust image container padding
+    Adjust overall card scaling
+    Adjust card max-width
+    Adjust image aspect ratio
+    Adjust product image fit behavior
+    Adjust typography sizing
+    Adjust price sizing
+    Adjust product title sizing
+    Adjust spacing between products
+    Adjust row spacing separately from column spacing
+    
+    Add Theme Editor Settings For:
+    
+    Product card scale (%) slider
+    Product image scale (%) slider
+    Card width slider
+    Card height slider
+    Product image padding
+    Product title font size
+    Price font size
+    Compare-at price font size
+    Grid spacing
+    Row spacing
+    Column spacing
+    Desktop products per row
+    Tablet products per row
+    Mobile products per row
+    Product image aspect ratio
+    Card border radius
+    Card shadow intensity
+    Hover animation intensity
+    Hover image zoom intensity
+    Image fit mode (contain / cover)
+    Max content width
+    
+    Layout Requirements:
+    
+    Fully responsive grid layout
+    Clean vertical product feed
+    Luxury fashion aesthetic
+    Spacious layout with balanced whitespace
+    Optimized for large apparel imagery
+    No cropped or oversized product images
+    Smooth responsive scaling across all devices
+    No mobile overflow issues
+    Products should feel balanced and centered
+    
+    Image Requirements:
+    
+    Maintain improved image framing from previous update
+    Secondary hover image must match primary image sizing exactly
+    No aggressive zooming
+    Keep whitespace around garments
+    Prevent clipping/cropping of hoodies, pants, or full outfits
+    Maintain premium editorial-style framing
+    
+    Keep Existing Features:
+    
+    Sale badges
+    Compare-at pricing
+    Hover reveal second image
+    Hover animation
+    Quick add support if enabled
+    Fully customizable colors
+    Collection picker
+    Responsive typography
+    Shopify Online Store 2.0 compatibility
+    
+    Do not rebuild the section from scratch — modify the existing premium products section and convert the layout behavior from horizontal carousel scrolling into a vertically scrolling responsive product grid with advanced product card customization controls., Refine the existing featured products grid section with one final sizing adjustment:
+    
+    
+    Reduce the overall product card/container size by approximately 5%
+    
+    
+    Increase the actual product image size inside the card by approximately 5%
+    
+    
+    The goal is to make the products appear larger and more prominent while reducing unnecessary empty card space/background around them.
+    Specific Changes:
+    
+    
+    Slightly shrink card padding and outer container dimensions
+    
+    
+    Slightly enlarge the product imagery within the image container
+    
+    
+    Reduce excess whitespace beneath images
+    
+    
+    Keep the layout balanced and premium
+    
+    
+    Maintain the luxury editorial aesthetic
+    
+    
+    Ensure images remain fully visible without cropping
+    
+    
+    Preserve all existing hover effects and second-image reveal behavior
+    
+    
+    Keep secondary hover image perfectly matched in scale and positioning to the primary image
+    
+    
+    Layout Goals:
+    
+    
+    More image-focused
+    
+    
+    Tighter and cleaner card proportions
+    
+    
+    Less dead space
+    
+    
+    Products should visually dominate the card more
+    
+    
+    Maintain responsive scaling across desktop/tablet/mobile
+    
+    
+    Do not redesign the section — only fine-tune the proportions so the cards feel slightly more compact while the apparel imagery feels slightly larger and more premium.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-premium-grid-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.section_padding_top }}px 0 {{ block.settings.section_padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-premium-grid__container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_content_width }}px;
+    margin: 0 auto;
+    padding: 0 {{ block.settings.container_padding }}px;
+  }
+
+  .ai-premium-grid__header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: {{ block.settings.header_spacing }}px;
+  }
+
+  .ai-premium-grid__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 {{ block.settings.subheading_spacing }}px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    text-transform: {{ block.settings.heading_transform }};
+  }
+
+  .ai-premium-grid__subtitle-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subheading_size }}px;
+    color: {{ block.settings.subheading_color }};
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-premium-grid__products-{{ ai_gen_id }} {
+    display: grid;
+    {% if block.settings.products_per_row_mobile == '1' %}
+      grid-template-columns: 1fr;
+    {% else %}
+      grid-template-columns: repeat(2, 1fr);
+    {% endif %}
+    gap: {{ block.settings.row_spacing_mobile }}px {{ block.settings.column_spacing_mobile }}px;
+  }
+
+  .ai-premium-grid__card-{{ ai_gen_id }} {
+    position: relative;
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transform: scale({{ block.settings.card_scale | times: 0.95 | divided_by: 100.0 }});
+    {% if block.settings.card_max_width > 0 %}
+      max-width: {{ block.settings.card_max_width }}px;
+      margin: 0 auto;
+      width: 100%;
+    {% endif %}
+    {% if block.settings.card_shadow_intensity > 0 %}
+      box-shadow: 0 {{ block.settings.card_shadow_intensity | times: 2 }}px {{ block.settings.card_shadow_intensity | times: 8 }}px rgba(0, 0, 0, {{ block.settings.card_shadow_intensity | divided_by: 100.0 }});
+    {% endif %}
+  }
+
+  .ai-premium-grid__card-{{ ai_gen_id }}:hover {
+    {% if block.settings.enable_hover_lift %}
+      transform: scale({{ block.settings.card_scale | times: 0.95 | divided_by: 100.0 }}) translateY(-{{ block.settings.hover_lift_intensity }}px);
+      {% if block.settings.card_shadow_intensity > 0 %}
+        box-shadow: 0 {{ block.settings.card_shadow_intensity | times: 3 }}px {{ block.settings.card_shadow_intensity | times: 12 }}px rgba(0, 0, 0, {{ block.settings.card_shadow_intensity | times: 1.5 | divided_by: 100.0 }});
+      {% endif %}
+    {% endif %}
+  }
+
+  .ai-premium-grid__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: {{ block.settings.image_aspect_ratio }}%;
+    overflow: hidden;
+    background-color: {{ block.settings.image_background }};
+    {% if block.settings.image_padding > 0 %}
+      padding: {{ block.settings.image_padding }}px;
+    {% endif %}
+  }
+
+  .ai-premium-grid__image-container-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: {{ block.settings.image_scale | times: 1.05 }}%;
+    height: {{ block.settings.image_scale | times: 1.05 }}%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-premium-grid__image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: {{ block.settings.image_fit }};
+    object-position: center;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .ai-premium-grid__image-{{ ai_gen_id }}.primary {
+    opacity: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+
+  .ai-premium-grid__image-{{ ai_gen_id }}.secondary {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+  }
+
+  {% if block.settings.enable_hover_effect %}
+    .ai-premium-grid__card-{{ ai_gen_id }}:hover .ai-premium-grid__image-{{ ai_gen_id }}.primary {
+      opacity: 0;
+    }
+
+    .ai-premium-grid__card-{{ ai_gen_id }}:hover .ai-premium-grid__image-{{ ai_gen_id }}.secondary {
+      opacity: 1;
+      {% if block.settings.hover_image_zoom > 0 %}
+        transform: scale({{ 1 | plus: block.settings.hover_image_zoom | divided_by: 100.0 }});
+      {% endif %}
+    }
+  {% endif %}
+
+  .ai-premium-grid__badges-{{ ai_gen_id }} {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ai-premium-grid__badge-{{ ai_gen_id }} {
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-radius: {{ block.settings.badge_border_radius }}px;
+  }
+
+  .ai-premium-grid__badge-{{ ai_gen_id }}.sale {
+    background-color: {{ block.settings.sale_badge_bg }};
+    color: {{ block.settings.sale_badge_text }};
+  }
+
+  .ai-premium-grid__badge-{{ ai_gen_id }}.sold-out {
+    background-color: {{ block.settings.sold_out_badge_bg }};
+    color: {{ block.settings.sold_out_badge_text }};
+  }
+
+  .ai-premium-grid__quick-actions-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    z-index: 3;
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .ai-premium-grid__card-{{ ai_gen_id }}:hover .ai-premium-grid__quick-actions-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-premium-grid__action-btn-{{ ai_gen_id }} {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: {{ block.settings.action_btn_bg }};
+    color: {{ block.settings.action_btn_color }};
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .ai-premium-grid__action-btn-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.action_btn_hover_bg }};
+    transform: scale(1.1);
+  }
+
+  .ai-premium-grid__action-btn-{{ ai_gen_id }} svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .ai-premium-grid__info-{{ ai_gen_id }} {
+    padding: {{ block.settings.card_content_padding | times: 0.85 }}px;
+  }
+
+  {% if block.settings.show_vendor %}
+    .ai-premium-grid__vendor-{{ ai_gen_id }} {
+      font-size: 11px;
+      color: {{ block.settings.vendor_color }};
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+  {% endif %}
+
+  .ai-premium-grid__title-link-{{ ai_gen_id }} {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .ai-premium-grid__product-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.product_title_size }}px;
+    color: {{ block.settings.product_title_color }};
+    margin: 0 0 {{ block.settings.title_spacing | times: 0.85 }}px;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -0.2px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .ai-premium-grid__price-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .ai-premium-grid__price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_size }}px;
+    color: {{ block.settings.price_color }};
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+
+  {% if block.settings.show_compare_price %}
+    .ai-premium-grid__compare-price-{{ ai_gen_id }} {
+      font-size: {{ block.settings.compare_price_size }}px;
+      color: {{ block.settings.compare_price_color }};
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+  {% endif %}
+
+  @media screen and (min-width: 750px) {
+    .ai-premium-grid__products-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.products_per_row_tablet }}, 1fr);
+      gap: {{ block.settings.row_spacing_tablet }}px {{ block.settings.column_spacing_tablet }}px;
+    }
+
+    .ai-premium-grid__title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 1.2 }}px;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .ai-premium-grid__products-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.products_per_row_desktop }}, 1fr);
+      gap: {{ block.settings.row_spacing_desktop }}px {{ block.settings.column_spacing_desktop }}px;
+    }
+
+    .ai-premium-grid__title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 1.5 }}px;
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-premium-grid__quick-actions-{{ ai_gen_id }} {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+{% endstyle %}
+
+<premium-grid-{{ ai_gen_id }} class="ai-premium-grid-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-premium-grid__container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank or block.settings.subheading != blank %}
+      <div class="ai-premium-grid__header-{{ ai_gen_id }}">
+        {% if block.settings.heading != blank %}
+          <h2 class="ai-premium-grid__title-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+        {% endif %}
+        {% if block.settings.subheading != blank %}
+          <p class="ai-premium-grid__subtitle-{{ ai_gen_id }}">{{ block.settings.subheading }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="ai-premium-grid__products-{{ ai_gen_id }}">
+      {% if block.settings.collection != blank %}
+        {% assign products_to_show = block.settings.products_limit %}
+        {% for product in block.settings.collection.products limit: products_to_show %}
+          <div class="ai-premium-grid__card-{{ ai_gen_id }}">
+            <a href="{{ product.url }}" class="ai-premium-grid__title-link-{{ ai_gen_id }}">
+              <div class="ai-premium-grid__image-wrapper-{{ ai_gen_id }}">
+                <div class="ai-premium-grid__image-container-{{ ai_gen_id }}">
+                  {% if product.featured_image %}
+                    <img
+                      src="{{ product.featured_image | image_url: width: 800 }}"
+                      alt="{{ product.featured_image.alt | escape }}"
+                      loading="lazy"
+                      width="800"
+                      height="{{ 800 | times: block.settings.image_aspect_ratio | divided_by: 100 }}"
+                      class="ai-premium-grid__image-{{ ai_gen_id }} primary"
+                    >
+                  {% else %}
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  {% endif %}
+
+                  {% if block.settings.enable_hover_effect and product.images[1] %}
+                    <img
+                      src="{{ product.images[1] | image_url: width: 800 }}"
+                      alt="{{ product.images[1].alt | escape }}"
+                      loading="lazy"
+                      width="800"
+                      height="{{ 800 | times: block.settings.image_aspect_ratio | divided_by: 100 }}"
+                      class="ai-premium-grid__image-{{ ai_gen_id }} secondary"
+                    >
+                  {% endif %}
+                </div>
+
+                <div class="ai-premium-grid__badges-{{ ai_gen_id }}">
+                  {% if block.settings.show_sale_badge and product.compare_at_price > product.price %}
+                    {% if block.settings.sale_badge_type == 'percentage' %}
+                      {% assign discount = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price %}
+                      <span class="ai-premium-grid__badge-{{ ai_gen_id }} sale">-{{ discount }}%</span>
+                    {% else %}
+                      <span class="ai-premium-grid__badge-{{ ai_gen_id }} sale">Sale</span>
+                    {% endif %}
+                  {% endif %}
+
+                  {% if block.settings.show_sold_out_badge and product.available == false %}
+                    <span class="ai-premium-grid__badge-{{ ai_gen_id }} sold-out">Sold Out</span>
+                  {% endif %}
+                </div>
+
+                {% if block.settings.show_quick_add or block.settings.show_wishlist %}
+                  <div class="ai-premium-grid__quick-actions-{{ ai_gen_id }}">
+                    {% if block.settings.show_wishlist %}
+                      <button class="ai-premium-grid__action-btn-{{ ai_gen_id }}" aria-label="Add to wishlist">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                      </button>
+                    {% endif %}
+                    {% if block.settings.show_quick_add and product.available %}
+                      <button class="ai-premium-grid__action-btn-{{ ai_gen_id }}" aria-label="Quick add">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="9" cy="21" r="1"></circle>
+                          <circle cx="20" cy="21" r="1"></circle>
+                          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                      </button>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+            </a>
+
+            <div class="ai-premium-grid__info-{{ ai_gen_id }}">
+              {% if block.settings.show_vendor and product.vendor %}
+                <div class="ai-premium-grid__vendor-{{ ai_gen_id }}">{{ product.vendor }}</div>
+              {% endif %}
+
+              <a href="{{ product.url }}" class="ai-premium-grid__title-link-{{ ai_gen_id }}">
+                <h3 class="ai-premium-grid__product-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+              </a>
+
+              <div class="ai-premium-grid__price-wrapper-{{ ai_gen_id }}">
+                <span class="ai-premium-grid__price-{{ ai_gen_id }}">{{ product.price | money }}</span>
+                {% if block.settings.show_compare_price and product.compare_at_price > product.price %}
+                  <span class="ai-premium-grid__compare-price-{{ ai_gen_id }}">{{ product.compare_at_price | money }}</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        {% for i in (1..6) %}
+          <div class="ai-premium-grid__card-{{ ai_gen_id }}">
+            <div class="ai-premium-grid__image-wrapper-{{ ai_gen_id }}">
+              <div class="ai-premium-grid__image-container-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            </div>
+            <div class="ai-premium-grid__info-{{ ai_gen_id }}">
+              <h3 class="ai-premium-grid__product-title-{{ ai_gen_id }}">Product Title</h3>
+              <div class="ai-premium-grid__price-wrapper-{{ ai_gen_id }}">
+                <span class="ai-premium-grid__price-{{ ai_gen_id }}">$99.00</span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</premium-grid-{{ ai_gen_id }}>
+
+<script>
+(function() {
+  class PremiumGrid{{ ai_gen_id }} extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+    }
+  }
+
+  customElements.define('premium-grid-{{ ai_gen_id }}', PremiumGrid{{ ai_gen_id }});
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Premium products grid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Collection"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "min": 4,
+      "max": 50,
+      "step": 1,
+      "label": "Maximum products to show",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Featured Collection"
+    },
+    {
+      "type": "select",
+      "id": "heading_transform",
+      "label": "Heading text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "value": "lowercase",
+          "label": "Lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#141414"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Discover our latest arrivals"
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#737373"
+    },
+    {
+      "type": "range",
+      "id": "subheading_spacing",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Subheading spacing",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "header_spacing",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Header bottom spacing",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Grid layout"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Products per row (desktop)",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "products_per_row_tablet",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Products per row (tablet)",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "products_per_row_mobile",
+      "label": "Products per row (mobile)",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "column_spacing_desktop",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Column spacing (desktop)",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "row_spacing_desktop",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Row spacing (desktop)",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "column_spacing_tablet",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Column spacing (tablet)",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "row_spacing_tablet",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Row spacing (tablet)",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "column_spacing_mobile",
+      "min": 5,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Column spacing (mobile)",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "row_spacing_mobile",
+      "min": 5,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Row spacing (mobile)",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "container_padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Container padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "max_content_width",
+      "min": 1000,
+      "max": 2000,
+      "step": 50,
+      "unit": "px",
+      "label": "Max content width",
+      "default": 1400
+    },
+    {
+      "type": "header",
+      "content": "Product card sizing"
+    },
+    {
+      "type": "range",
+      "id": "card_scale",
+      "min": 70,
+      "max": 130,
+      "step": 5,
+      "unit": "%",
+      "label": "Card scale",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "card_max_width",
+      "min": 0,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "label": "Card max width",
+      "default": 0,
+      "info": "Set to 0 for no limit"
+    },
+    {
+      "type": "range",
+      "id": "image_scale",
+      "min": 60,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Image scale",
+      "default": 85
+    },
+    {
+      "type": "range",
+      "id": "image_aspect_ratio",
+      "min": 80,
+      "max": 150,
+      "step": 5,
+      "unit": "%",
+      "label": "Image aspect ratio",
+      "default": 125
+    },
+    {
+      "type": "range",
+      "id": "image_padding",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Image container padding",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit mode",
+      "options": [
+        {
+          "value": "contain",
+          "label": "Contain"
+        },
+        {
+          "value": "cover",
+          "label": "Cover"
+        }
+      ],
+      "default": "contain"
+    },
+    {
+      "type": "color",
+      "id": "image_background",
+      "label": "Image background",
+      "default": "#f6f6f6"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "card_content_padding",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card content padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_intensity",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "label": "Card shadow intensity",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Hover effects"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_hover_lift",
+      "label": "Enable hover lift effect",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "hover_lift_intensity",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Hover lift intensity",
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_hover_effect",
+      "label": "Show second image on hover",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "hover_image_zoom",
+      "min": 0,
+      "max": 20,
+      "step": 5,
+      "unit": "%",
+      "label": "Hover image zoom",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Product information"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "vendor_color",
+      "label": "Vendor color",
+      "default": "#737373"
+    },
+    {
+      "type": "range",
+      "id": "product_title_size",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "label": "Product title size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "product_title_color",
+      "label": "Product title color",
+      "default": "#141414"
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "min": 5,
+      "max": 25,
+      "step": 1,
+      "unit": "px",
+      "label": "Title bottom spacing",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "label": "Price size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price color",
+      "default": "#141414"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_compare_price",
+      "label": "Show compare at price",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "compare_price_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Compare price size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "compare_price_color",
+      "label": "Compare price color",
+      "default": "#737373"
+    },
+    {
+      "type": "header",
+      "content": "Badges"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sale_badge",
+      "label": "Show sale badge",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "sale_badge_type",
+      "label": "Sale badge type",
+      "options": [
+        {
+          "value": "text",
+          "label": "Text"
+        },
+        {
+          "value": "percentage",
+          "label": "Percentage"
+        }
+      ],
+      "default": "percentage"
+    },
+    {
+      "type": "color",
+      "id": "sale_badge_bg",
+      "label": "Sale badge background",
+      "default": "#ff4444"
+    },
+    {
+      "type": "color",
+      "id": "sale_badge_text",
+      "label": "Sale badge text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sold_out_badge",
+      "label": "Show sold out badge",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "sold_out_badge_bg",
+      "label": "Sold out badge background",
+      "default": "#141414"
+    },
+    {
+      "type": "color",
+      "id": "sold_out_badge_text",
+      "label": "Sold out badge text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "badge_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Badge border radius",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Quick actions"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_add",
+      "label": "Show quick add button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "label": "Show wishlist button",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "action_btn_bg",
+      "label": "Action button background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "action_btn_hover_bg",
+      "label": "Action button hover background",
+      "default": "#141414"
+    },
+    {
+      "type": "color",
+      "id": "action_btn_color",
+      "label": "Action button color",
+      "default": "#141414"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 60
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Premium products grid"
+    }
+  ]
+}
+{% endschema %}

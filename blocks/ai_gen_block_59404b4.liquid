@@ -1,0 +1,413 @@
+{% doc %}
+  @prompt
+    Create a complete Liquid snippet named live-viewer-counter.liquid that displays "Currently viewing: [number] people" with a light blue bullet point (•) before the text. The bullet should be light blue (#87CEEB), the text "Currently viewing:" should be dark gray/black, and the number should be red (#FF0000). Style it to look clean and minimal like a product page element. On page load show a random number between 19-40, then every 15-30 seconds update to a new random number with smooth fade-out/fade-in CSS opacity transition. Include all HTML, CSS, and JavaScript in one self-contained snippet file., the numbers are not popping up, the space between the numbers and people is too short, and tailor the section to be centred in mobile and desktop screens. make sure its the button layout so it has a light grey bacground thay slighty pops when hovered over. Add a top padding that is customizable and completely white, you forgot to add all the other customizable sections
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-live-viewer-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    padding-top: {{ block.settings.top_padding }}px;
+    background-color: {{ block.settings.wrapper_background_color }};
+  }
+
+  .ai-live-viewer-container-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: {{ block.settings.element_spacing }}px;
+    padding: {{ block.settings.button_padding_vertical }}px {{ block.settings.button_padding_horizontal }}px;
+    background-color: {{ block.settings.button_background_color }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    cursor: default;
+    margin: 0 auto;
+  }
+
+  .ai-live-viewer-container-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background_color }};
+    transform: translateY(-1px);
+  }
+
+  .ai-live-viewer-bullet-{{ ai_gen_id }} {
+    color: {{ block.settings.bullet_color }};
+    font-size: {{ block.settings.bullet_size }}px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .ai-live-viewer-content-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: {{ block.settings.text_spacing }}px;
+    font-size: {{ block.settings.text_size }}px;
+    line-height: 1.4;
+  }
+
+  .ai-live-viewer-label-{{ ai_gen_id }} {
+    color: {{ block.settings.label_color }};
+    font-weight: {{ block.settings.label_font_weight }};
+  }
+
+  .ai-live-viewer-number-{{ ai_gen_id }} {
+    color: {{ block.settings.number_color }};
+    font-weight: {{ block.settings.number_font_weight }};
+    min-width: 20px;
+    text-align: center;
+    transition: opacity {{ block.settings.fade_duration }}s ease;
+  }
+
+  .ai-live-viewer-number-{{ ai_gen_id }}.fade-out {
+    opacity: 0;
+  }
+
+  .ai-live-viewer-text-{{ ai_gen_id }} {
+    color: {{ block.settings.people_text_color }};
+    font-weight: {{ block.settings.people_font_weight }};
+  }
+
+  .ai-live-viewer-center-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-live-viewer-container-{{ ai_gen_id }} {
+      padding: {{ block.settings.button_padding_vertical | times: 0.8 }}px {{ block.settings.button_padding_horizontal | times: 0.8 }}px;
+    }
+
+    .ai-live-viewer-content-{{ ai_gen_id }} {
+      font-size: {{ block.settings.text_size | times: 0.9 }}px;
+    }
+
+    .ai-live-viewer-bullet-{{ ai_gen_id }} {
+      font-size: {{ block.settings.bullet_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-live-viewer-wrapper-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-live-viewer-center-{{ ai_gen_id }}">
+    <live-viewer-counter-{{ ai_gen_id }} class="ai-live-viewer-container-{{ ai_gen_id }}">
+      <span class="ai-live-viewer-bullet-{{ ai_gen_id }}">•</span>
+      <div class="ai-live-viewer-content-{{ ai_gen_id }}">
+        <span class="ai-live-viewer-label-{{ ai_gen_id }}">{{ block.settings.label_text }}</span>
+        <span class="ai-live-viewer-number-{{ ai_gen_id }}" data-viewer-count>0</span>
+        <span class="ai-live-viewer-text-{{ ai_gen_id }}">{{ block.settings.people_text }}</span>
+      </div>
+    </live-viewer-counter-{{ ai_gen_id }}>
+  </div>
+</div>
+
+<script>
+  (function() {
+    class LiveViewerCounter{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.numberElement = null;
+        this.updateInterval = null;
+        this.minNumber = {{ block.settings.min_number }};
+        this.maxNumber = {{ block.settings.max_number }};
+        this.minDelay = {{ block.settings.min_update_delay }} * 1000;
+        this.maxDelay = {{ block.settings.max_update_delay }} * 1000;
+        this.fadeDuration = {{ block.settings.fade_duration }} * 1000;
+      }
+
+      connectedCallback() {
+        this.numberElement = this.querySelector('[data-viewer-count]');
+        this.initializeCounter();
+      }
+
+      disconnectedCallback() {
+        if (this.updateInterval) {
+          clearTimeout(this.updateInterval);
+        }
+      }
+
+      getRandomNumber(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      getRandomDelay() {
+        return this.getRandomNumber(this.minDelay, this.maxDelay);
+      }
+
+      updateCounter() {
+        if (!this.numberElement) return;
+
+        this.numberElement.classList.add('fade-out');
+
+        setTimeout(() => {
+          const newNumber = this.getRandomNumber(this.minNumber, this.maxNumber);
+          this.numberElement.textContent = newNumber;
+          this.numberElement.classList.remove('fade-out');
+        }, this.fadeDuration);
+
+        this.scheduleNextUpdate();
+      }
+
+      scheduleNextUpdate() {
+        if (this.updateInterval) {
+          clearTimeout(this.updateInterval);
+        }
+        const delay = this.getRandomDelay();
+        this.updateInterval = setTimeout(() => this.updateCounter(), delay);
+      }
+
+      initializeCounter() {
+        const initialNumber = this.getRandomNumber(this.minNumber, this.maxNumber);
+        this.numberElement.textContent = initialNumber;
+        this.scheduleNextUpdate();
+      }
+    }
+
+    customElements.define('live-viewer-counter-{{ ai_gen_id }}', LiveViewerCounter{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Live viewer counter",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "label_text",
+      "label": "Label text",
+      "default": "Currently viewing:"
+    },
+    {
+      "type": "text",
+      "id": "people_text",
+      "label": "People text",
+      "default": "people"
+    },
+    {
+      "type": "header",
+      "content": "Counter settings"
+    },
+    {
+      "type": "range",
+      "id": "min_number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "label": "Minimum number",
+      "default": 19
+    },
+    {
+      "type": "range",
+      "id": "max_number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "label": "Maximum number",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "min_update_delay",
+      "min": 5,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "label": "Minimum update delay",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "max_update_delay",
+      "min": 5,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "label": "Maximum update delay",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "fade_duration",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "unit": "s",
+      "label": "Fade transition duration",
+      "default": 0.3
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "wrapper_background_color",
+      "label": "Wrapper background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Button background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background_color",
+      "label": "Button hover background",
+      "default": "#e8e8e8"
+    },
+    {
+      "type": "color",
+      "id": "bullet_color",
+      "label": "Bullet color",
+      "default": "#87CEEB"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "number_color",
+      "label": "Number color",
+      "default": "#FF0000"
+    },
+    {
+      "type": "color",
+      "id": "people_text_color",
+      "label": "People text color",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "bullet_size",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Bullet size",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "label_font_weight",
+      "min": 400,
+      "max": 700,
+      "step": 100,
+      "label": "Label font weight",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "number_font_weight",
+      "min": 400,
+      "max": 700,
+      "step": 100,
+      "label": "Number font weight",
+      "default": 700
+    },
+    {
+      "type": "range",
+      "id": "people_font_weight",
+      "min": 400,
+      "max": 700,
+      "step": 100,
+      "label": "People text font weight",
+      "default": 500
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "top_padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Button vertical padding",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Button horizontal padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "element_spacing",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Space between bullet and text",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "text_spacing",
+      "min": 4,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Space between text elements",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Button border radius",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Live viewer counter"
+    }
+  ]
+}
+{% endschema %}

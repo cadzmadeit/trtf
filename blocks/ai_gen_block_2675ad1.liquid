@@ -1,0 +1,287 @@
+{% doc %}
+  @prompt
+    Create a customer review carousel that displays one review at a time with automatic sliding every 3 seconds. Include a row of five yellow stars at the top, centered italic review quote, bold centered reviewer name below, and slide dots to show current position. Make it responsive for desktop and mobile with clean modern fonts and consistent spacing. No manual navigation arrows needed., make it smaller, cleaner, and more concise. The dots should be normal dots that are grey and circular with no outline. everything should be centered and smaller, make the dot completely circular like a regular dot, lastly make it have  5 reviews, keep everything else the same.
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-review-carousel-{{ ai_gen_id }} {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    text-align: center;
+  }
+
+  .ai-review-carousel__stars-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin-bottom: 20px;
+  }
+
+  .ai-review-carousel__star-{{ ai_gen_id }} {
+    width: 16px;
+    height: 16px;
+    color: #FFD700;
+  }
+
+  .ai-review-carousel__container-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+  }
+
+  .ai-review-carousel__track-{{ ai_gen_id }} {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+  }
+
+  .ai-review-carousel__slide-{{ ai_gen_id }} {
+    min-width: 100%;
+    padding: 0 15px;
+    box-sizing: border-box;
+  }
+
+  .ai-review-carousel__quote-{{ ai_gen_id }} {
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #666;
+    margin-bottom: 12px;
+  }
+
+  .ai-review-carousel__author-{{ ai_gen_id }} {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .ai-review-carousel__dots-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 8px;}
+
+  .ai-review-carousel__dot-{{ ai_gen_id }} {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #ccc;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    padding: 0;
+  }
+
+  .ai-review-carousel__dot-{{ ai_gen_id }}.active {
+    background-color: #666;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-review-carousel-{{ ai_gen_id }} {
+      padding: 20px 15px;
+    }
+
+    .ai-review-carousel__quote-{{ ai_gen_id }} {
+      font-size: 15px;
+    }
+
+    .ai-review-carousel__author-{{ ai_gen_id }} {
+      font-size: 13px;
+    }
+  }
+{% endstyle %}
+
+<review-carousel-{{ ai_gen_id }}
+  class="ai-review-carousel-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-review-carousel__stars-{{ ai_gen_id }}">
+    {% for i in (1..5) %}
+      <svg class="ai-review-carousel__star-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+    {% endfor %}
+  </div>
+
+  <div class="ai-review-carousel__container-{{ ai_gen_id }}">
+    <div class="ai-review-carousel__track-{{ ai_gen_id }}">
+      {% for i in (1..5) %}
+        {% liquid
+          assign review_text_key = 'review_' | append: i | append: '_text'
+          assign review_author_key = 'review_' | append: i | append: '_author'
+          assign review_text = block.settings[review_text_key]
+          assign review_author = block.settings[review_author_key]
+        %}
+        {% if review_text != blank and review_author != blank %}
+          <div class="ai-review-carousel__slide-{{ ai_gen_id }}">
+            <div class="ai-review-carousel__quote-{{ ai_gen_id }}">
+              "{{ review_text }}"
+            </div>
+            <div class="ai-review-carousel__author-{{ ai_gen_id }}">
+              {{ review_author }}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="ai-review-carousel__dots-{{ ai_gen_id }}"></div>
+</review-carousel-{{ ai_gen_id }}><script>
+  (function() {
+    class ReviewCarousel{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentSlide = 0;
+        this.autoSlideInterval = null;
+        this.slides = [];
+      }
+
+      connectedCallback() {
+        this.track = this.querySelector('.ai-review-carousel__track-{{ ai_gen_id }}');
+        this.dotsContainer = this.querySelector('.ai-review-carousel__dots-{{ ai_gen_id }}');
+        this.slides = Array.from(this.querySelectorAll('.ai-review-carousel__slide-{{ ai_gen_id }}'));
+        if (this.slides.length === 0) return;
+        
+        this.createDots();
+        this.updateSlide();
+        this.startAutoSlide();
+        
+        this.addEventListener('mouseenter', () => this.stopAutoSlide());
+        this.addEventListener('mouseleave', () => this.startAutoSlide());
+      }
+
+      disconnectedCallback() {
+        this.stopAutoSlide();
+      }
+
+      createDots() {
+        this.dotsContainer.innerHTML = '';
+        this.slides.forEach((_, index) => {
+          const dot = document.createElement('button');
+          dot.className = 'ai-review-carousel__dot-{{ ai_gen_id }}';
+          dot.addEventListener('click', () => this.goToSlide(index));
+          this.dotsContainer.appendChild(dot);
+        });
+      }
+
+      updateSlide() {
+        if (this.slides.length === 0) return;
+        
+        const translateX = -this.currentSlide * 100;
+        this.track.style.transform = `translateX(${translateX}%)`;
+        
+        const dots = this.dotsContainer.querySelectorAll('.ai-review-carousel__dot-{{ ai_gen_id }}');
+        dots.forEach((dot, index) => {
+          dot.classList.toggle('active', index === this.currentSlide);
+        });
+      }
+
+      goToSlide(index) {
+        this.currentSlide = index;
+        this.updateSlide();
+      }
+
+      nextSlide() {
+        this.currentSlide = (this.currentSlide + 1) % this.slides.length;
+        this.updateSlide();
+      }
+
+      startAutoSlide() {
+        this.stopAutoSlide();
+        if (this.slides.length > 1) {
+          this.autoSlideInterval = setInterval(() => {
+            this.nextSlide();
+          }, 3000);
+        }
+      }
+
+      stopAutoSlide() {
+        if (this.autoSlideInterval) {
+          clearInterval(this.autoSlideInterval);
+          this.autoSlideInterval = null;
+        }
+      }
+    }
+
+    customElements.define('review-carousel-{{ ai_gen_id }}', ReviewCarousel{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Review Carousel",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "review_1_text",
+      "label": "Review 1",
+      "default": "Amazing quality and fast shipping!"
+    },
+    {
+      "type": "text",
+      "id": "review_1_author",
+      "label": "Author 1",
+      "default": "Sarah J."
+    },
+    {
+      "type": "textarea",
+      "id": "review_2_text",
+      "label": "Review 2",
+      "default": "Exceeded my expectations completely."
+    },
+    {
+      "type": "text",
+      "id": "review_2_author",
+      "label": "Author 2",
+      "default": "Mike C."
+    },
+    {
+      "type": "textarea",
+      "id": "review_3_text",
+      "label": "Review 3",
+      "default": "Best purchase I've made this year!"
+    },
+    {
+      "type": "text",
+      "id": "review_3_author",
+      "label": "Author 3",
+      "default": "Emily R."
+    },
+    {
+      "type": "textarea",
+      "id": "review_4_text",
+      "label": "Review 4",
+      "default": "Outstanding customer service and product quality."
+    },
+    {
+      "type": "text",
+      "id": "review_4_author",
+      "label": "Author 4",
+      "default": "David L."
+    },
+    {
+      "type": "textarea",
+      "id": "review_5_text",
+      "label": "Review 5",
+      "default": "Highly recommend to everyone!"
+    },
+    {
+      "type": "text",
+      "id": "review_5_author",
+      "label": "Author 5",
+      "default": "Jessica M."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Review Carousel"
+    }
+  ]
+}
+{% endschema %}

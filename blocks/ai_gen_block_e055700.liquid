@@ -1,0 +1,370 @@
+{% doc %}
+  @prompt
+    CREATE A highly responsive and customizable button section that is optimized for both mobile and desktop, make the section itself thin with adjustable borders and centered
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-button-section-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: {{ block.settings.section_padding_mobile }}px 20px;
+    background-color: {{ block.settings.section_background }};
+    border-top: {{ block.settings.border_top_width }}px solid {{ block.settings.border_color }};
+    border-bottom: {{ block.settings.border_bottom_width }}px solid {{ block.settings.border_color }};
+  }
+
+  .ai-button-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: {{ block.settings.max_width }}px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .ai-button-{{ ai_gen_id }} {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: {{ block.settings.button_padding_vertical }}px {{ block.settings.button_padding_horizontal }}px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: {{ block.settings.button_font_weight }};
+    text-decoration: none;
+    text-transform: {{ block.settings.button_text_transform }};
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: {% if block.settings.button_full_width %}100%{% else %}auto{% endif %};
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .ai-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_background_hover }};
+    color: {{ block.settings.button_text_color_hover }};
+    border-color: {{ block.settings.button_border_color_hover }};
+    transform: translateY({{ block.settings.button_hover_lift }}px);
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-button-section-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding_desktop }}px 40px;
+    }
+
+    .ai-button-{{ ai_gen_id }} {
+      font-size: {{ block.settings.button_font_size_desktop }}px;
+      padding: {{ block.settings.button_padding_vertical_desktop }}px {{ block.settings.button_padding_horizontal_desktop }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-button-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-button-wrapper-{{ ai_gen_id }}">
+    {% if block.settings.button_link != blank %}
+      <a href="{{ block.settings.button_link }}" class="ai-button-{{ ai_gen_id }}">
+        {{ block.settings.button_text }}
+      </a>
+    {% else %}
+      <button type="button" class="ai-button-{{ ai_gen_id }}">
+        {{ block.settings.button_text }}
+      </button>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Button section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Button content"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Section style"
+    },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_mobile",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding (mobile)",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "section_padding_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding (desktop)",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 300,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "label": "Max width",
+      "default": 1200
+    },
+    {
+      "type": "header",
+      "content": "Border"
+    },
+    {
+      "type": "range",
+      "id": "border_top_width",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Top border width",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "border_bottom_width",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Bottom border width",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#eaeaea"
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_full_width",
+      "label": "Full width button",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Background",
+      "default": "#141414"
+    },
+    {
+      "type": "color",
+      "id": "button_background_hover",
+      "label": "Hover background",
+      "default": "#3f3f3f"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#ececec"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color_hover",
+      "label": "Hover text color",
+      "default": "#ececec"
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "label": "Border width",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Border color",
+      "default": "#141414"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color_hover",
+      "label": "Hover border color",
+      "default": "#3f3f3f"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Button typography"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size (mobile)",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_font_size_desktop",
+      "min": 10,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size (desktop)",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "button_font_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "select",
+      "id": "button_text_transform",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "value": "lowercase",
+          "label": "Lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "capitalize"
+    },
+    {
+      "type": "header",
+      "content": "Button spacing"
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "min": 4,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding (mobile)",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Horizontal padding (mobile)",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical_desktop",
+      "min": 4,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding (desktop)",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal_desktop",
+      "min": 10,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Horizontal padding (desktop)",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Button effects"
+    },
+    {
+      "type": "range",
+      "id": "button_hover_lift",
+      "min": -5,
+      "max": 0,
+      "step": 1,
+      "unit": "px",
+      "label": "Hover lift",
+      "default": -2
+    }
+  ],
+  "presets": [
+    {
+      "name": "Button section"
+    }
+  ]
+}
+{% endschema %}

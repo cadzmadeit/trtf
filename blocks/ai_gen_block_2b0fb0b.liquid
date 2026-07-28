@@ -1,0 +1,844 @@
+{% doc %}
+  @prompt
+    Create a fully customizable announcement banner with fade transitions between multiple announcements using arrow navigation. The banner should use the theme's font family in all caps with responsive font sizing that automatically scales down to keep text on one line. Include a close (X) button positioned so arrows don't cover it. The banner should be mobile-responsive, displaying promotional messages horizontally on mobile with dark background, white text and icons for "Free Shipping", "Free Mystery item", and "Secure Payments". Include comprehensive customization options for background color, text color, font size (that actually works when edited), icon selection, message text, transition speed, and show/hide options for each element. Ensure the font matches the AI-generated slideshow section and automatically adjusts size to fit content in one line., now just make the icons better, make the font size adjustable. the words should say, free shipping, free mystery item, and secure payments, make the font size be able to go even smaller, make the text the same size as the custom banner section
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-announcement-banner-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    color: {{ block.settings.text_color }};
+    font-family: {{ settings.type_header_font.family }}, {{ settings.type_header_font.fallback_families }};
+    font-weight: {{ settings.type_header_font.weight }};
+    font-style: {{ settings.type_header_font.style }};
+    text-transform: uppercase;
+    overflow: hidden;
+    z-index: 1000;
+  }
+
+  .ai-announcement-banner-container-{{ ai_gen_id }} {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: {{ block.settings.banner_height }}px;
+    padding: 12px 60px;
+  }
+
+  .ai-announcement-content-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .ai-announcement-slide-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity {{ block.settings.transition_speed }}ms ease-in-out, visibility {{ block.settings.transition_speed }}ms ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    white-space: nowrap;
+  }
+
+  .ai-announcement-slide-{{ ai_gen_id }}.active {
+    opacity: 1;
+    visibility: visible;
+    position: relative;
+  }
+
+  .ai-announcement-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.font_size }}px;
+    line-height: 1.2;
+    letter-spacing: {{ settings.type_header_letter_spacing }}px;
+    margin: 0;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  .ai-announcement-icon-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    flex-shrink: 0;
+    fill: currentColor;
+  }
+
+  .ai-announcement-nav-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: {{ block.settings.text_color }};
+    cursor: pointer;
+    padding: 8px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+  }
+
+  .ai-announcement-nav-{{ ai_gen_id }}:hover {
+    opacity: 1;
+  }
+
+  .ai-announcement-nav-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+
+  .ai-announcement-nav-prev-{{ ai_gen_id }} {
+    left: 16px;
+  }
+
+  .ai-announcement-nav-next-{{ ai_gen_id }} {
+    right: 16px;
+  }
+
+  .ai-announcement-close-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: {{ block.settings.text_color }};
+    cursor: pointer;
+    padding: 8px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    z-index: 3;
+  }
+
+  .ai-announcement-close-{{ ai_gen_id }}:hover {
+    opacity: 1;
+  }
+
+  .ai-announcement-close-{{ ai_gen_id }} svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-announcement-banner-container-{{ ai_gen_id }} {
+      padding: 12px 50px;
+    }
+
+    .ai-announcement-text-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.font_size }}px * 0.85);
+    }
+
+    .ai-announcement-icon-{{ ai_gen_id }} {
+      width: calc({{ block.settings.icon_size }}px * 0.85);
+      height: calc({{ block.settings.icon_size }}px * 0.85);
+    }
+
+    .ai-announcement-nav-{{ ai_gen_id }} svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .ai-announcement-close-{{ ai_gen_id }} svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .ai-announcement-banner-container-{{ ai_gen_id }} {
+      padding: 10px 40px;
+    }
+
+    .ai-announcement-slide-{{ ai_gen_id }} {
+      gap: 12px;
+    }
+
+    .ai-announcement-text-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.font_size }}px * 0.75);
+      white-space: normal;
+      line-height: 1.3;
+    }
+
+    .ai-announcement-icon-{{ ai_gen_id }} {
+      width: calc({{ block.settings.icon_size }}px * 0.75);
+      height: calc({{ block.settings.icon_size }}px * 0.75);
+    }
+  }
+{% endstyle %}
+
+<announcement-banner-{{ ai_gen_id }}
+  class="ai-announcement-banner-{{ ai_gen_id }}"
+  data-auto-rotate="{{ block.settings.auto_rotate }}"
+  data-rotation-speed="{{ block.settings.rotation_speed }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-announcement-banner-container-{{ ai_gen_id }}">
+    {% if block.settings.show_navigation %}
+      <button class="ai-announcement-nav-{{ ai_gen_id }} ai-announcement-nav-prev-{{ ai_gen_id }}" aria-label="Previous announcement">
+        <svg viewBox="0 0 24 24">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+    {% endif %}
+
+    <div class="ai-announcement-content-{{ ai_gen_id }}">
+      {% assign slide_count = 0 %}
+      
+      {% if block.settings.show_announcement_1 and block.settings.announcement_1_text != blank %}
+        {% assign slide_count = slide_count | plus: 1 %}
+        <div class="ai-announcement-slide-{{ ai_gen_id }} {% if slide_count == 1 %}active{% endif %}" data-slide="1">
+          {% if block.settings.show_announcement_1_icon and block.settings.announcement_1_icon != 'none' %}
+            {% case block.settings.announcement_1_icon %}
+              {% when 'shipping' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+              {% when 'gift' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-2 .89-2 2v4c0 1.11.89 2 2 2h1v6c0 1.11.89 2 2 2h10c1.11 0 2-.89 2-2v-6h1c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 15H7v-6h4v6zm0-8H7V9h4v2zm2 0V9h4v2h-4zm4 8h-4v-6h4v6z"/>
+                </svg>
+              {% when 'security' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                </svg>
+              {% when 'star' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              {% when 'heart' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+              {% when 'phone' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                </svg>
+              {% when 'email' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+              {% when 'discount' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M12.79 21L3 11.21v2c0 .45.54.67.85.35l7.79-7.79c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0L3.21 3.79c-.32-.31-.85-.09-.85.35v2L11.21 3h2c.45 0 .67.54.35.85L5.77 11.64c-.2.2-.2.51 0 .71.2.2.51.2.71 0l7.79-7.79c.31-.32.09-.85-.35-.85h-2L21 12.79v-2c0-.45-.54-.67-.85-.35l-7.79 7.79c-.2.2-.2.51 0 .71.2.2.51.2.71 0l7.79-7.79c.32.31.85.09.85-.35v2L12.79 21z"/>
+                  <circle cx="9" cy="9" r="1"/>
+                  <circle cx="15" cy="15" r="1"/>
+                </svg>
+              {% when 'clock' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"/>
+                </svg>
+              {% when 'trophy' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M7 4V2c0-1.1.9-2 2-2h6c1.1 0 2 .9 2 2v2h4v2h-1l-.64 7.11c-.07.78-.69 1.39-1.47 1.39H16v4c0 1.1-.9 2-2 2h-4c-1.1 0-2-.9-2-2v-4H6.11c-.78 0-1.4-.61-1.47-1.39L4 6H3V4h4zm2 0h6V2H9v2zm1 16h4v-4h-4v4zM6.96 6l.54 6H8V9.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5V12h.5l.54-6H6.96z"/>
+                </svg>
+            {% endcase %}
+          {% endif %}
+          <p class="ai-announcement-text-{{ ai_gen_id }}">{{ block.settings.announcement_1_text }}</p>
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_announcement_2 and block.settings.announcement_2_text != blank %}
+        {% assign slide_count = slide_count | plus: 1 %}
+        <div class="ai-announcement-slide-{{ ai_gen_id }} {% if slide_count == 1 %}active{% endif %}" data-slide="2">
+          {% if block.settings.show_announcement_2_icon and block.settings.announcement_2_icon != 'none' %}
+            {% case block.settings.announcement_2_icon %}
+              {% when 'shipping' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+              {% when 'gift' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-2 .89-2 2v4c0 1.11.89 2 2 2h1v6c0 1.11.89 2 2 2h10c1.11 0 2-.89 2-2v-6h1c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 15H7v-6h4v6zm0-8H7V9h4v2zm2 0V9h4v2h-4zm4 8h-4v-6h4v6z"/>
+                </svg>
+              {% when 'security' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                </svg>
+              {% when 'star' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              {% when 'heart' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+              {% when 'phone' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                </svg>
+              {% when 'email' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+              {% when 'discount' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M12.79 21L3 11.21v2c0 .45.54.67.85.35l7.79-7.79c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0L3.21 3.79c-.32-.31-.85-.09-.85.35v2L11.21 3h2c.45 0 .67.54.35.85L5.77 11.64c-.2.2-.2.51 0 .71.2.2.51.2.71 0l7.79-7.79c.31-.32.09-.85-.35-.85h-2L21 12.79v-2c0-.45-.54-.67-.85-.35l-7.79 7.79c-.2.2-.2.51 0 .71.2.2.51.2.71 0l7.79-7.79c.32.31.85.09.85-.35v2L12.79 21z"/>
+                  <circle cx="9" cy="9" r="1"/>
+                  <circle cx="15" cy="15" r="1"/>
+                </svg>
+              {% when 'clock' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"/>
+                </svg>
+              {% when 'trophy' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M7 4V2c0-1.1.9-2 2-2h6c1.1 0 2 .9 2 2v2h4v2h-1l-.64 7.11c-.07.78-.69 1.39-1.47 1.39H16v4c0 1.1-.9 2-2 2h-4c-1.1 0-2-.9-2-2v-4H6.11c-.78 0-1.4-.61-1.47-1.39L4 6H3V4h4zm2 0h6V2H9v2zm1 16h4v-4h-4v4zM6.96 6l.54 6H8V9.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5V12h.5l.54-6H6.96z"/>
+                </svg>
+            {% endcase %}
+          {% endif %}
+          <p class="ai-announcement-text-{{ ai_gen_id }}">{{ block.settings.announcement_2_text }}</p>
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_announcement_3 and block.settings.announcement_3_text != blank %}
+        {% assign slide_count = slide_count | plus: 1 %}
+        <div class="ai-announcement-slide-{{ ai_gen_id }} {% if slide_count == 1 %}active{% endif %}" data-slide="3">
+          {% if block.settings.show_announcement_3_icon and block.settings.announcement_3_icon != 'none' %}
+            {% case block.settings.announcement_3_icon %}
+              {% when 'shipping' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+              {% when 'gift' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-2 .89-2 2v4c0 1.11.89 2 2 2h1v6c0 1.11.89 2 2 2h10c1.11 0 2-.89 2-2v-6h1c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 15H7v-6h4v6zm0-8H7V9h4v2zm2 0V9h4v2h-4zm4 8h-4v-6h4v6z"/>
+                </svg>
+              {% when 'security' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                </svg>
+              {% when 'star' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              {% when 'heart' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+              {% when 'phone' %>
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                </svg>
+              {% when 'email' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+              {% when 'discount' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M12.79 21L3 11.21v2c0 .45.54.67.85.35l7.79-7.79c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0L3.21 3.79c-.32-.31-.85-.09-.85.35v2L11.21 3h2c.45 0 .67.54.35.85L5.77 11.64c-.2.2-.2.51 0 .71.2.2.51.2.71 0l7.79-7.79c.31-.32.09-.85-.35-.85h-2L21 12.79v-2c0-.45-.54-.67-.85-.35l-7.79 7.79c-.2.2-.2.51 0 .71.2.2.51.2.71 0l7.79-7.79c.32.31.85.09.85-.35v2L12.79 21z"/>
+                  <circle cx="9" cy="9" r="1"/>
+                  <circle cx="15" cy="15" r="1"/>
+                </svg>
+              {% when 'clock' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"/>
+                </svg>
+              {% when 'trophy' %}
+                <svg class="ai-announcement-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+                  <path d="M7 4V2c0-1.1.9-2 2-2h6c1.1 0 2 .9 2 2v2h4v2h-1l-.64 7.11c-.07.78-.69 1.39-1.47 1.39H16v4c0 1.1-.9 2-2 2h-4c-1.1 0-2-.9-2-2v-4H6.11c-.78 0-1.4-.61-1.47-1.39L4 6H3V4h4zm2 0h6V2H9v2zm1 16h4v-4h-4v4zM6.96 6l.54 6H8V9.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5V12h.5l.54-6H6.96z"/>
+                </svg>
+            {% endcase %}
+          {% endif %}
+          <p class="ai-announcement-text-{{ ai_gen_id }}">{{ block.settings.announcement_3_text }}</p>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if block.settings.show_navigation and slide_count > 1 %}
+      <button class="ai-announcement-nav-{{ ai_gen_id }} ai-announcement-nav-next-{{ ai_gen_id }}" aria-label="Next announcement">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+    {% endif %}
+
+    {% if block.settings.show_close_button %}
+      <button class="ai-announcement-close-{{ ai_gen_id }}" aria-label="Close announcement">
+        <svg viewBox="0 0 24 24">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+      </button>
+    {% endif %}
+  </div>
+</announcement-banner-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AnnouncementBanner{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentSlide = 0;
+        this.slides = [];
+        this.autoRotateInterval = null;
+        this.isVisible = true;
+      }
+
+      connectedCallback() {
+        this.slides = Array.from(this.querySelectorAll('.ai-announcement-slide-{{ ai_gen_id }}'));
+        this.totalSlides = this.slides.length;
+        
+        if (this.totalSlides <= 1) return;
+
+        this.setupEventListeners();
+        this.setupAutoRotation();
+        this.adjustFontSize();
+        
+        window.addEventListener('resize', () => this.adjustFontSize());
+      }
+
+      disconnectedCallback() {
+        if (this.autoRotateInterval) {
+          clearInterval(this.autoRotateInterval);
+        }
+        window.removeEventListener('resize', () => this.adjustFontSize());
+      }
+
+      setupEventListeners() {
+        const prevButton = this.querySelector('.ai-announcement-nav-prev-{{ ai_gen_id }}');
+        const nextButton = this.querySelector('.ai-announcement-nav-next-{{ ai_gen_id }}');
+        const closeButton = this.querySelector('.ai-announcement-close-{{ ai_gen_id }}');
+
+        if (prevButton) {
+          prevButton.addEventListener('click', () => this.previousSlide());
+        }
+
+        if (nextButton) {
+          nextButton.addEventListener('click', () => this.nextSlide());
+        }
+
+        if (closeButton) {
+          closeButton.addEventListener('click', () => this.closeBanner());
+        }
+
+        this.addEventListener('mouseenter', () => this.pauseAutoRotation());
+        this.addEventListener('mouseleave', () => this.resumeAutoRotation());
+      }
+
+      setupAutoRotation() {
+        const autoRotate = this.dataset.autoRotate === 'true';
+        const rotationSpeed = parseInt(this.dataset.rotationSpeed) || 5000;
+
+        if (autoRotate && this.totalSlides > 1) {
+          this.autoRotateInterval = setInterval(() => {
+            this.nextSlide();
+          }, rotationSpeed);
+        }
+      }
+
+      pauseAutoRotation() {
+        if (this.autoRotateInterval) {
+          clearInterval(this.autoRotateInterval);
+        }
+      }
+
+      resumeAutoRotation() {
+        this.setupAutoRotation();
+      }
+
+      nextSlide() {
+        this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        this.showSlide(this.currentSlide);
+      }
+
+      previousSlide() {
+        this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        this.showSlide(this.currentSlide);
+      }
+
+      showSlide(index) {
+        this.slides.forEach((slide, i) => {
+          slide.classList.toggle('active', i === index);
+        });
+      }
+
+      closeBanner() {
+        this.style.display = 'none';
+        this.isVisible = false;
+        
+        try {
+          localStorage.setItem('announcement-banner-{{ ai_gen_id }}-closed', 'true');
+        } catch (e) {
+          console.warn('Could not save banner state to localStorage');
+        }
+      }
+
+      adjustFontSize() {
+        const textElements = this.querySelectorAll('.ai-announcement-text-{{ ai_gen_id }}');
+        const container = this.querySelector('.ai-announcement-banner-container-{{ ai_gen_id }}');
+        
+        if (!container) return;
+
+        textElements.forEach(textElement => {
+          const slide = textElement.closest('.ai-announcement-slide-{{ ai_gen_id }}');
+          if (!slide) return;
+
+          slide.classList.add('active');
+          
+          let fontSize = {{ block.settings.font_size }};
+          const minFontSize = Math.max(6, fontSize * 0.6);
+          const maxWidth = container.offsetWidth - 120;
+          
+          textElement.style.fontSize = fontSize + 'px';
+          
+          while (textElement.scrollWidth > maxWidth && fontSize > minFontSize) {
+            fontSize -= 1;
+            textElement.style.fontSize = fontSize + 'px';
+          }
+          
+          if (slide.dataset.slide !== '1') {
+            slide.classList.remove('active');
+          }
+        });
+      }
+    }
+
+    customElements.define('announcement-banner-{{ ai_gen_id }}', AnnouncementBanner{{ ai_gen_id }});
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const banner = document.querySelector('announcement-banner-{{ ai_gen_id }}');
+      if (banner) {
+        try {
+          const isClosed = localStorage.getItem('announcement-banner-{{ ai_gen_id }}-closed');
+          if (isClosed === 'true') {
+            banner.style.display = 'none';
+          }
+        } catch (e) {
+          console.warn('Could not read banner state from localStorage');
+        }
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Announcement banner",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Banner style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "banner_height",
+      "min": 20,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Banner height",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 6,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_navigation",
+      "label": "Show arrow navigation",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_close_button",
+      "label": "Show close button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_rotate",
+      "label": "Auto rotate announcements",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "rotation_speed",
+      "min": 2000,
+      "max": 9000,
+      "step": 500,
+      "unit": "ms",
+      "label": "Auto rotation speed",
+      "default": 5000
+    },
+    {
+      "type": "range",
+      "id": "transition_speed",
+      "min": 200,
+      "max": 1000,
+      "step": 50,
+      "unit": "ms",
+      "label": "Transition speed",
+      "default": 400
+    },
+    {
+      "type": "header",
+      "content": "Announcement 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement_1",
+      "label": "Show announcement 1",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_1_text",
+      "label": "Announcement text",
+      "default": "Free shipping"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement_1_icon",
+      "label": "Show icon",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "announcement_1_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "shipping",
+          "label": "Shipping truck"
+        },
+        {
+          "value": "gift",
+          "label": "Gift box"
+        },
+        {
+          "value": "security",
+          "label": "Security shield"
+        },
+        {
+          "value": "star",
+          "label": "Star"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        },
+        {
+          "value": "phone",
+          "label": "Phone"
+        },
+        {
+          "value": "email",
+          "label": "Email"
+        },
+        {
+          "value": "discount",
+          "label": "Discount tag"
+        },
+        {
+          "value": "clock",
+          "label": "Clock"
+        },
+        {
+          "value": "trophy",
+          "label": "Trophy"
+        }
+      ],
+      "default": "shipping"
+    },
+    {
+      "type": "header",
+      "content": "Announcement 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement_2",
+      "label": "Show announcement 2",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_2_text",
+      "label": "Announcement text",
+      "default": "Free mystery item"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement_2_icon",
+      "label": "Show icon",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "announcement_2_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "shipping",
+          "label": "Shipping truck"
+        },
+        {
+          "value": "gift",
+          "label": "Gift box"
+        },
+        {
+          "value": "security",
+          "label": "Security shield"
+        },
+        {
+          "value": "star",
+          "label": "Star"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        },
+        {
+          "value": "phone",
+          "label": "Phone"
+        },
+        {
+          "value": "email",
+          "label": "Email"
+        },
+        {
+          "value": "discount",
+          "label": "Discount tag"
+        },
+        {
+          "value": "clock",
+          "label": "Clock"
+        },
+        {
+          "value": "trophy",
+          "label": "Trophy"
+        }
+      ],
+      "default": "gift"
+    },
+    {
+      "type": "header",
+      "content": "Announcement 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement_3",
+      "label": "Show announcement 3",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_3_text",
+      "label": "Announcement text",
+      "default": "Secure payments"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement_3_icon",
+      "label": "Show icon",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "announcement_3_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "shipping",
+          "label": "Shipping truck"
+        },
+        {
+          "value": "gift",
+          "label": "Gift box"
+        },
+        {
+          "value": "security",
+          "label": "Security shield"
+        },
+        {
+          "value": "star",
+          "label": "Star"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        },
+        {
+          "value": "phone",
+          "label": "Phone"
+        },
+        {
+          "value": "email",
+          "label": "Email"
+        },
+        {
+          "value": "discount",
+          "label": "Discount tag"
+        },
+        {
+          "value": "clock",
+          "label": "Clock"
+        },
+        {
+          "value": "trophy",
+          "label": "Trophy"
+        }
+      ],
+      "default": "security"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement banner"
+    }
+  ]
+}
+{% endschema %}

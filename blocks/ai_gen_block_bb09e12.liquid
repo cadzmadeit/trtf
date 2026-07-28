@@ -1,0 +1,524 @@
+{% doc %}
+  @prompt
+    Create a premium Shopify announcement bar section inspired by luxury streetwear brands. The section should be a fully responsive infinite scrolling marquee with smooth continuous movement from right to left.
+    DESIGN STYLE:
+    
+    
+    Black background (#000000)
+    
+    
+    White uppercase text
+    
+    
+    Tight letter spacing
+    
+    
+    Bold condensed luxury/streetwear aesthetic
+    
+    
+    Height around 40-50px desktop and slightly smaller on mobile
+    
+    
+    Clean minimal look
+    
+    
+    The separator icon between messages should NOT be a star
+    
+    
+    Instead use a custom T-shaped gothic cross icon (luxury chrome-hearts inspired style)
+    
+    
+    Cross should be vertically centered and slightly smaller than the text
+    
+    
+    FUNCTIONALITY:
+    
+    
+    Infinite seamless marquee effect with NO visible gaps or jumps
+    
+    
+    Smooth CSS animation
+    
+    
+    Adjustable scroll speed in theme editor
+    
+    
+    Pause on hover toggle
+    
+    
+    Mobile responsive
+    
+    
+    No horizontal overflow bugs on mobile
+    
+    
+    Text should never wrap
+    
+    
+    Marquee content duplicated automatically for seamless looping
+    
+    
+    CUSTOMIZATION OPTIONS IN SHOPIFY EDITOR:
+    
+    
+    Announcement text
+    
+    
+    Background color
+    
+    
+    Text color
+    
+    
+    Cross icon color
+    
+    
+    Font size desktop
+    
+    
+    Font size mobile
+    
+    
+    Font weight
+    
+    
+    Letter spacing
+    
+    
+    Scroll speed range slider
+    
+    
+    Bar height
+    
+    
+    Pause on hover checkbox
+    
+    
+    Enable/disable marquee
+    
+    
+    Text transform (uppercase toggle)
+    
+    
+    Separator spacing
+    
+    
+    Padding left/right
+    
+    
+    ADVANCED FEATURES:
+    
+    
+    Allow multiple announcement messages as blocks
+    
+    
+    Automatically insert cross separator between blocks
+    
+    
+    Support links per announcement block
+    
+    
+    Smooth performance with GPU accelerated transforms
+    
+    
+    Use pure CSS animation if possible
+    
+    
+    Prevent layout shifts
+    
+    
+    Should work perfectly in Dawn theme and most Shopify themes
+    
+    
+    SECTION REQUIREMENTS:
+    
+    
+    Create as a Shopify section file
+    
+    
+    Include full Liquid, CSS, schema, and minimal JS only if necessary
+    
+    
+    Use semantic class naming
+    
+    
+    Code should be clean and optimized
+    
+    
+    Avoid unnecessary wrappers
+    
+    
+    Ensure accessibility
+    
+    
+    Mobile should look identical proportionally to desktop
+    
+    
+    ICON REQUIREMENT:
+    Use an inline SVG for the separator icon shaped like a gothic T-style cross, NOT a regular Christian cross and NOT a star. The style should feel luxury, edgy, and minimal
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% if block.settings.enable_marquee %}
+  {% style %}
+    .ai-marquee-bar-{{ ai_gen_id }} {
+      display: block;
+      width: 100%;
+      background-color: {{ block.settings.background_color }};
+      overflow: hidden;
+      position: relative;
+      height: {{ block.settings.bar_height }}px;
+    }
+
+    .ai-marquee-wrapper-{{ ai_gen_id }} {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      width: fit-content;
+      animation: ai-marquee-scroll-{{ ai_gen_id }} {{ block.settings.scroll_speed }}s linear infinite;
+      will-change: transform;
+    }
+
+    {% if block.settings.pause_on_hover %}
+      .ai-marquee-bar-{{ ai_gen_id }}:hover .ai-marquee-wrapper-{{ ai_gen_id }} {
+        animation-play-state: paused;
+      }
+    {% endif %}
+
+    .ai-marquee-content-{{ ai_gen_id }} {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      padding: 0 {{ block.settings.padding_horizontal }}px;
+    }
+
+    .ai-marquee-item-{{ ai_gen_id }} {
+      display: inline-flex;
+      align-items: center;
+      color: {{ block.settings.text_color }};
+      font-size: {{ block.settings.font_size_desktop }}px;
+      font-weight: {{ block.settings.font_weight }};
+      letter-spacing: {{ block.settings.letter_spacing }}px;
+      {% if block.settings.text_uppercase %}
+        text-transform: uppercase;
+      {% endif %}
+      text-decoration: none;
+    }
+
+    .ai-marquee-item-{{ ai_gen_id }}:hover {
+      color: {{ block.settings.text_color }};
+    }
+
+    .ai-marquee-separator-{{ ai_gen_id }} {
+      display: inline-flex;
+      align-items: center;
+      margin: 0 {{ block.settings.separator_spacing }}px;
+      color: {{ block.settings.cross_color }};
+      flex-shrink: 0;
+    }
+
+    .ai-marquee-separator-{{ ai_gen_id }} svg {
+      width: calc({{ block.settings.font_size_desktop }}px * 0.8);
+      height: calc({{ block.settings.font_size_desktop }}px * 0.8);
+      fill: currentColor;
+    }
+
+    @keyframes ai-marquee-scroll-{{ ai_gen_id }} {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    @media screen and (max-width: 749px) {
+      .ai-marquee-bar-{{ ai_gen_id }} {
+        height: calc({{ block.settings.bar_height }}px * 0.8);
+      }
+
+      .ai-marquee-item-{{ ai_gen_id }} {
+        font-size: {{ block.settings.font_size_mobile }}px;
+      }
+
+      .ai-marquee-separator-{{ ai_gen_id }} svg {
+        width: calc({{ block.settings.font_size_mobile }}px * 0.8);
+        height: calc({{ block.settings.font_size_mobile }}px * 0.8);
+      }
+    }
+  {% endstyle %}
+
+  <announcement-marquee-{{ ai_gen_id }} class="ai-marquee-bar-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+    <div class="ai-marquee-wrapper-{{ ai_gen_id }}">
+      {% for i in (1..2) %}
+        <div class="ai-marquee-content-{{ ai_gen_id }}">
+          {% assign messages = block.settings.announcement_text_1 | append: '|||' | append: block.settings.announcement_text_2 | append: '|||' | append: block.settings.announcement_text_3 | split: '|||' %}
+          {% assign links = block.settings.announcement_link_1 | append: '|||' | append: block.settings.announcement_link_2 | append: '|||' | append: block.settings.announcement_link_3 | split: '|||' %}
+
+          {% for message in messages %}
+            {% if message != blank %}
+              {% assign link = links[forloop.index0] %}
+              
+              {% if link != blank %}
+                <a href="{{ link }}" class="ai-marquee-item-{{ ai_gen_id }}">
+                  {{ message }}
+                </a>
+              {% else %}
+                <span class="ai-marquee-item-{{ ai_gen_id }}">
+                  {{ message }}
+                </span>
+              {% endif %}
+
+              <span class="ai-marquee-separator-{{ ai_gen_id }}" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M12 2L10 10H2L10 12L12 22L14 12L22 10L14 10L12 2Z"/>
+                </svg>
+              </span>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  </announcement-marquee-{{ ai_gen_id }}>
+
+  <script>
+    (function() {
+      class AnnouncementMarquee{{ ai_gen_id }} extends HTMLElement {
+        constructor() {
+          super();
+        }
+
+        connectedCallback() {
+          this.adjustAnimationDuration();
+        }
+
+        adjustAnimationDuration() {
+          const wrapper = this.querySelector('.ai-marquee-wrapper-{{ ai_gen_id }}');
+          if (!wrapper) return;
+
+          const content = wrapper.querySelector('.ai-marquee-content-{{ ai_gen_id }}');
+          if (!content) return;
+
+          const contentWidth = content.offsetWidth;
+          const speed = {{ block.settings.scroll_speed }};
+          const duration = (contentWidth / 100) * (speed / 10);
+
+          wrapper.style.animationDuration = duration + 's';
+        }
+      }
+
+      customElements.define('announcement-marquee-{{ ai_gen_id }}', AnnouncementMarquee{{ ai_gen_id }});
+    })();
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Luxury marquee bar",
+  "tag": null,
+  "class": "announcement-bar-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_marquee",
+      "label": "Enable marquee",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "bar_height",
+      "min": 30,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Bar height",
+      "default": 45
+    },
+    {
+      "type": "header",
+      "content": "Announcements"
+    },
+    {
+      "type": "text",
+      "id": "announcement_text_1",
+      "label": "Announcement 1",
+      "default": "Free shipping worldwide"
+    },
+    {
+      "type": "url",
+      "id": "announcement_link_1",
+      "label": "Link 1"
+    },
+    {
+      "type": "text",
+      "id": "announcement_text_2",
+      "label": "Announcement 2",
+      "default": "New collection dropping soon"
+    },
+    {
+      "type": "url",
+      "id": "announcement_link_2",
+      "label": "Link 2"
+    },
+    {
+      "type": "text",
+      "id": "announcement_text_3",
+      "label": "Announcement 3",
+      "default": "Limited edition pieces available"
+    },
+    {
+      "type": "url",
+      "id": "announcement_link_3",
+      "label": "Link 3"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "cross_color",
+      "label": "Cross icon",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size desktop",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size mobile",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extra bold"
+        },
+        {
+          "value": "900",
+          "label": "Black"
+        }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "label": "Letter spacing",
+      "default": 1.5
+    },
+    {
+      "type": "checkbox",
+      "id": "text_uppercase",
+      "label": "Uppercase text",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "s",
+      "label": "Scroll speed",
+      "default": 30,
+      "info": "Lower is faster"
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause on hover",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "separator_spacing",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Separator spacing",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding horizontal",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxury marquee bar"
+    }
+  ]
+}
+{% endschema %}

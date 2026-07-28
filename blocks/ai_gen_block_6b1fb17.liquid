@@ -1,0 +1,1029 @@
+{% doc %}
+  @prompt
+    Create a premium Customer Review Carousel section matching Trustpilot's horizontal slider design:
+    
+    LAYOUT & DESIGN:
+    - Section title "Customer Reviews" with average star rating and total review count below
+    - Individual review cards with: star rating icons, city/state location, review text, customer name, and date
+    - Cards styled with soft shadows, rounded corners, subtle borders, light background
+    - Clean minimal aesthetic with proper white space
+    
+    CAROUSEL FUNCTIONALITY:
+    - Horizontal scrolling card layout with CSS scroll-snap
+    - Left/right navigation arrows that float vertically centered
+    - Touch-friendly swipe gestures on mobile
+    - Auto-snap to each card when scrolling
+    - Smooth kinetic scrolling effect
+    - No infinite loop (linear carousel)
+    
+    RESPONSIVE BEHAVIOR:
+    - Desktop: 2.5-3 cards visible
+    - Tablet: 1.5-2 cards visible  
+    - Mobile: 1 card visible
+    - No horizontal overflow or white space beyond viewport
+    - Arrows positioned to never overlap text on small screens
+    - Dynamic card resizing based on viewport
+    
+    CUSTOMIZATION SETTINGS:
+    - Star color picker
+    - Card background color
+    - Card border radius slider
+    - Section padding controls
+    - Title text input
+    - Individual review blocks (repeatable) with fields for: stars, location, review text, name, date
+    - Arrow style toggle (solid/outline)
+    - Arrow background color
+    - Arrow size slider
+    - Auto-scroll toggle with speed control
+    - Cards visible per breakpoint (desktop/tablet/mobile)
+    
+    PERFORMANCE:
+    - Vanilla JavaScript only (no external libraries)
+    - CSS scroll-snap for native smooth scrolling
+    - Optimized DOM manipulation
+    - Minimal reflows
+    - Fast, lightweight implementation
+    
+    Use semantic HTML, accessible ARIA labels, and follow Shopify Liquid best practices for theme blocks., make it an infinite scroll and make the cards pop out of the screen almost. also make sure on mobile you can scroll horizontally while still having the arrows there on both mobile and desktop
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-review-carousel-{{ ai_gen_id }} {
+    padding: {{ block.settings.section_padding_top }}px 0 {{ block.settings.section_padding_bottom }}px;
+    overflow: hidden;
+  }
+
+  .ai-review-carousel-container-{{ ai_gen_id }} {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-review-carousel-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .ai-review-carousel-title-{{ ai_gen_id }} {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    color: {{ block.settings.title_color }};
+  }
+
+  .ai-review-carousel-rating-summary-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .ai-review-carousel-stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 4px;
+  }
+
+  .ai-review-carousel-star-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+    fill: {{ block.settings.star_color }};
+  }
+
+  .ai-review-carousel-count-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: #737373;
+  }
+
+  .ai-review-carousel-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    padding: 0 60px;
+  }
+
+  .ai-review-carousel-track-{{ ai_gen_id }} {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 20px 0;
+  }
+
+  .ai-review-carousel-track-{{ ai_gen_id }}::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ai-review-carousel-card-{{ ai_gen_id }} {
+    flex: 0 0 calc(33.333% - 14px);
+    scroll-snap-align: start;
+    background: {{ block.settings.card_background }};
+    border: 1px solid {{ block.settings.card_border_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transform: translateY(0);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .ai-review-carousel-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-review-carousel-card-stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+
+  .ai-review-carousel-card-star-{{ ai_gen_id }} {
+    width: 16px;
+    height: 16px;
+    fill: {{ block.settings.star_color }};
+  }
+
+  .ai-review-carousel-card-location-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: #737373;
+    margin-bottom: 12px;
+  }
+
+  .ai-review-carousel-card-text-{{ ai_gen_id }} {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #141414;
+    margin-bottom: 16px;
+  }
+
+  .ai-review-carousel-card-footer-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid #eaeaea;
+  }
+
+  .ai-review-carousel-card-name-{{ ai_gen_id }} {
+    font-size: 14px;
+    font-weight: 600;
+    color: #141414;
+  }
+
+  .ai-review-carousel-card-date-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: #737373;
+  }
+
+  .ai-review-carousel-arrow-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: {{ block.settings.arrow_size }}px;
+    height: {{ block.settings.arrow_size }}px;
+    border-radius: 50%;
+    {% if block.settings.arrow_style == 'solid' %}
+      background: {{ block.settings.arrow_background }};
+      border: none;
+    {% else %}
+      background: transparent;
+      border: 2px solid {{ block.settings.arrow_background }};
+    {% endif %}
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+  }
+
+  .ai-review-carousel-arrow-{{ ai_gen_id }}:hover {
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .ai-review-carousel-arrow-{{ ai_gen_id }}:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .ai-review-carousel-arrow-{{ ai_gen_id }}:disabled:hover {
+    transform: translateY(-50%) scale(1);
+  }
+
+  .ai-review-carousel-arrow-left-{{ ai_gen_id }} {
+    left: 0;
+  }
+
+  .ai-review-carousel-arrow-right-{{ ai_gen_id }} {
+    right: 0;
+  }
+
+  .ai-review-carousel-arrow-icon-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+    {% if block.settings.arrow_style == 'solid' %}
+      stroke: #ffffff;
+    {% else %}
+      stroke: {{ block.settings.arrow_background }};
+    {% endif %}
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-review-carousel-card-{{ ai_gen_id }} {
+      flex: 0 0 calc(50% - 10px);
+    }
+
+    .ai-review-carousel-wrapper-{{ ai_gen_id }} {
+      padding: 0 50px;
+    }
+
+    .ai-review-carousel-arrow-{{ ai_gen_id }} {
+      width: {{ block.settings.arrow_size | times: 0.8 }}px;
+      height: {{ block.settings.arrow_size | times: 0.8 }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-review-carousel-card-{{ ai_gen_id }} {
+      flex: 0 0 calc(100% - 0px);
+    }
+
+    .ai-review-carousel-wrapper-{{ ai_gen_id }} {
+      padding: 0 40px;
+    }
+
+    .ai-review-carousel-title-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+
+    .ai-review-carousel-arrow-{{ ai_gen_id }} {
+      width: {{ block.settings.arrow_size | times: 0.7 }}px;
+      height: {{ block.settings.arrow_size | times: 0.7 }}px;
+    }
+
+    .ai-review-carousel-arrow-icon-{{ ai_gen_id }} {
+      width: 16px;
+      height: 16px;
+    }
+  }
+{% endstyle %}
+
+<review-carousel-{{ ai_gen_id }} class="ai-review-carousel-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-review-carousel-container-{{ ai_gen_id }}">
+    <div class="ai-review-carousel-header-{{ ai_gen_id }}">
+      <h2 class="ai-review-carousel-title-{{ ai_gen_id }}">{{ block.settings.section_title }}</h2>
+      
+      {% if block.settings.show_rating_summary %}
+        <div class="ai-review-carousel-rating-summary-{{ ai_gen_id }}">
+          <div class="ai-review-carousel-stars-{{ ai_gen_id }}">
+            {% for i in (1..5) %}
+              <svg class="ai-review-carousel-star-{{ ai_gen_id }}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            {% endfor %}
+          </div>
+          <span class="ai-review-carousel-count-{{ ai_gen_id }}">{{ block.settings.total_reviews }} reviews</span>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="ai-review-carousel-wrapper-{{ ai_gen_id }}">
+      <button 
+        class="ai-review-carousel-arrow-{{ ai_gen_id }} ai-review-carousel-arrow-left-{{ ai_gen_id }}"
+        aria-label="Previous reviews"
+      >
+        <svg class="ai-review-carousel-arrow-icon-{{ ai_gen_id }}" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <div class="ai-review-carousel-track-{{ ai_gen_id }}">
+        {% for i in (1..10) %}
+          {% liquid
+            assign rating_key = 'review_' | append: i | append: '_rating'
+            assign location_key = 'review_' | append: i | append: '_location'
+            assign text_key = 'review_' | append: i | append: '_text'
+            assign name_key = 'review_' | append: i | append: '_name'
+            assign date_key = 'review_' | append: i | append: '_date'
+
+            assign rating = block.settings[rating_key]
+            assign location = block.settings[location_key]
+            assign text = block.settings[text_key]
+            assign name = block.settings[name_key]
+            assign date = block.settings[date_key]
+          %}
+
+          {% if text != blank %}
+            <div class="ai-review-carousel-card-{{ ai_gen_id }}">
+              <div class="ai-review-carousel-card-stars-{{ ai_gen_id }}">
+                {% for j in (1..rating) %}
+                  <svg class="ai-review-carousel-card-star-{{ ai_gen_id }}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                {% endfor %}
+              </div>
+
+              {% if location != blank %}
+                <div class="ai-review-carousel-card-location-{{ ai_gen_id }}">{{ location }}</div>
+              {% endif %}
+
+              <div class="ai-review-carousel-card-text-{{ ai_gen_id }}">
+                {{ text }}
+              </div>
+
+              <div class="ai-review-carousel-card-footer-{{ ai_gen_id }}">
+                <div class="ai-review-carousel-card-name-{{ ai_gen_id }}">{{ name }}</div>
+                <div class="ai-review-carousel-card-date-{{ ai_gen_id }}">{{ date }}</div>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <button 
+        class="ai-review-carousel-arrow-{{ ai_gen_id }} ai-review-carousel-arrow-right-{{ ai_gen_id }}"
+        aria-label="Next reviews"
+      >
+        <svg class="ai-review-carousel-arrow-icon-{{ ai_gen_id }}" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+</review-carousel-{{ ai_gen_id }}>
+
+<script>
+(function() {
+  class ReviewCarousel{{ ai_gen_id }} extends HTMLElement {
+    constructor() {
+      super();
+      this.track = this.querySelector('.ai-review-carousel-track-{{ ai_gen_id }}');
+      this.leftArrow = this.querySelector('.ai-review-carousel-arrow-left-{{ ai_gen_id }}');
+      this.rightArrow = this.querySelector('.ai-review-carousel-arrow-right-{{ ai_gen_id }}');
+      this.cards = this.querySelectorAll('.ai-review-carousel-card-{{ ai_gen_id }}');
+      this.autoScroll = {{ block.settings.auto_scroll }};
+      this.autoScrollSpeed = {{ block.settings.auto_scroll_speed }};
+      this.autoScrollInterval = null;
+      this.currentIndex = 0;
+      this.isInfinite = true;
+    }
+
+    connectedCallback() {
+      if (this.cards.length === 0) return;
+
+      this.cloneCards();
+      this.setupEventListeners();
+      this.updateArrows();
+
+      if (this.autoScroll) {
+        this.startAutoScroll();
+      }
+    }
+
+    cloneCards() {
+      const cardsArray = Array.from(this.cards);
+      const clonesBefore = cardsArray.map(card => card.cloneNode(true));
+      const clonesAfter = cardsArray.map(card => card.cloneNode(true));
+
+      clonesBefore.forEach(clone => {
+        clone.setAttribute('aria-hidden', 'true');
+        this.track.insertBefore(clone, this.track.firstChild);
+      });
+
+      clonesAfter.forEach(clone => {
+        clone.setAttribute('aria-hidden', 'true');
+        this.track.appendChild(clone);
+      });
+
+      this.allCards = this.track.querySelectorAll('.ai-review-carousel-card-{{ ai_gen_id }}');
+      this.originalCardsCount = this.cards.length;
+      
+      this.scrollToIndex(this.originalCardsCount, false);
+    }
+
+    setupEventListeners() {
+      this.leftArrow.addEventListener('click', () => this.scrollLeft());
+      this.rightArrow.addEventListener('click', () => this.scrollRight());
+
+      this.track.addEventListener('scroll', () => {
+        this.handleInfiniteScroll();
+        this.updateArrows();
+      });
+
+      this.track.addEventListener('mouseenter', () => {
+        if (this.autoScroll) {
+          this.stopAutoScroll();
+        }
+      });
+
+      this.track.addEventListener('mouseleave', () => {
+        if (this.autoScroll) {
+          this.startAutoScroll();
+        }
+      });
+
+      this.track.addEventListener('touchstart', () => {
+        if (this.autoScroll) {
+          this.stopAutoScroll();
+        }
+      });
+
+      this.track.addEventListener('touchend', () => {
+        if (this.autoScroll) {
+          this.startAutoScroll();
+        }
+      });
+    }
+
+    scrollLeft() {
+      const cardWidth = this.allCards[0].offsetWidth;
+      const gap = 20;
+      this.track.scrollBy({
+        left: -(cardWidth + gap),
+        behavior: 'smooth'
+      });
+    }
+
+    scrollRight() {
+      const cardWidth = this.allCards[0].offsetWidth;
+      const gap = 20;
+      this.track.scrollBy({
+        left: cardWidth + gap,
+        behavior: 'smooth'
+      });
+    }
+
+    handleInfiniteScroll() {
+      const scrollLeft = this.track.scrollLeft;
+      const cardWidth = this.allCards[0].offsetWidth;
+      const gap = 20;
+      const totalWidth = cardWidth + gap;
+
+      const firstCloneEnd = this.originalCardsCount * totalWidth;
+      const lastCloneStart = firstCloneEnd + (this.originalCardsCount * totalWidth);
+
+      if (scrollLeft <= 0) {
+        this.track.scrollLeft = firstCloneEnd;
+      } else if (scrollLeft >= lastCloneStart) {
+        this.track.scrollLeft = firstCloneEnd;
+      }
+    }
+
+    scrollToIndex(index, smooth = true) {
+      const cardWidth = this.allCards[0].offsetWidth;
+      const gap = 20;
+      this.track.scrollTo({
+        left: index * (cardWidth + gap),
+        behavior: smooth ? 'smooth' : 'auto'
+      });
+    }
+
+    updateArrows() {
+      this.leftArrow.disabled = false;
+      this.rightArrow.disabled = false;
+    }
+
+    startAutoScroll() {
+      this.autoScrollInterval = setInterval(() => {
+        this.scrollRight();
+      }, this.autoScrollSpeed * 1000);
+    }
+
+    stopAutoScroll() {
+      if (this.autoScrollInterval) {
+        clearInterval(this.autoScrollInterval);
+        this.autoScrollInterval = null;
+      }
+    }
+
+    disconnectedCallback() {
+      this.stopAutoScroll();
+    }
+  }
+
+  customElements.define('review-carousel-{{ ai_gen_id }}', ReviewCarousel{{ ai_gen_id }});
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Customer review carousel",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Title",
+      "default": "Customer Reviews"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#141414"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating_summary",
+      "label": "Show rating summary",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "total_reviews",
+      "label": "Total reviews",
+      "default": "1,234"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Border color",
+      "default": "#eaeaea"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star color",
+      "default": "#FFD700"
+    },
+    {
+      "type": "header",
+      "content": "Arrow style"
+    },
+    {
+      "type": "select",
+      "id": "arrow_style",
+      "label": "Style",
+      "options": [
+        {
+          "value": "solid",
+          "label": "Solid"
+        },
+        {
+          "value": "outline",
+          "label": "Outline"
+        }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "color",
+      "id": "arrow_background",
+      "label": "Arrow color",
+      "default": "#141414"
+    },
+    {
+      "type": "range",
+      "id": "arrow_size",
+      "min": 30,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Arrow size",
+      "default": 44
+    },
+    {
+      "type": "header",
+      "content": "Auto-scroll"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_scroll",
+      "label": "Enable auto-scroll",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "auto_scroll_speed",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Speed",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "Review 1"
+    },
+    {
+      "type": "range",
+      "id": "review_1_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Star rating",
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "review_1_location",
+      "label": "Location",
+      "default": "Los Angeles, CA"
+    },
+    {
+      "type": "textarea",
+      "id": "review_1_text",
+      "label": "Review text",
+      "default": "Amazing quality and fast shipping! This is exactly what I was looking for. Will definitely order again."
+    },
+    {
+      "type": "text",
+      "id": "review_1_name",
+      "label": "Customer name",
+      "default": "Jessica R."
+    },
+    {
+      "type": "text",
+      "id": "review_1_date",
+      "label": "Date",
+      "default": "Jan 20, 2025"
+    },
+    {
+      "type": "header",
+      "content": "Review 2"
+    },
+    {
+      "type": "range",
+      "id": "review_2_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Star rating",
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "review_2_location",
+      "label": "Location",
+      "default": "Miami, FL"
+    },
+    {
+      "type": "textarea",
+      "id": "review_2_text",
+      "label": "Review text",
+      "default": "Best purchase I've made this year. The attention to detail is incredible and customer service was top-notch."
+    },
+    {
+      "type": "text",
+      "id": "review_2_name",
+      "label": "Customer name",
+      "default": "Michael T."
+    },
+    {
+      "type": "text",
+      "id": "review_2_date",
+      "label": "Date",
+      "default": "Jan 18, 2025"
+    },
+    {
+      "type": "header",
+      "content": "Review 3"
+    },
+    {
+      "type": "range",
+      "id": "review_3_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Star rating",
+      "default": 4
+    },
+    {
+      "type": "text",
+      "id": "review_3_location",
+      "label": "Location",
+      "default": "Chicago, IL"
+    },
+    {
+      "type": "textarea",
+      "id": "review_3_text",
+      "label": "Review text",
+      "default": "Really impressed with the quality. Took a bit longer to arrive than expected but worth the wait!"
+    },
+    {
+      "type": "text",
+      "id": "review_3_name",
+      "label": "Customer name",
+      "default": "Amanda K."
+    },
+    {
+      "type": "text",
+      "id": "review_3_date",
+      "label": "Date",
+      "default": "Jan 15, 2025"
+    },
+    {
+      "type": "header",
+      "content": "Review 4"
+    },
+    {
+      "type": "range",
+      "id": "review_4_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Star rating",
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "review_4_location",
+      "label": "Location",
+      "default": "Austin, TX"
+    },
+    {
+      "type": "textarea",
+      "id": "review_4_text",
+      "label": "Review text",
+      "default": "Exceeded all my expectations! The craftsmanship is outstanding and it looks even better in person."
+    },
+    {
+      "type": "text",
+      "id": "review_4_name",
+      "label": "Customer name",
+      "default": "David L."
+    },
+    {
+      "type": "text",
+      "id": "review_4_date",
+      "label": "Date",
+      "default": "Jan 12, 2025"
+    },
+    {
+      "type": "header",
+      "content": "Review 5"
+    },
+    {
+      "type": "range",
+      "id": "review_5_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Star rating",
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "review_5_location",
+      "label": "Location",
+      "default": "Seattle, WA"
+    },
+    {
+      "type": "textarea",
+      "id": "review_5_text",
+      "label": "Review text",
+      "default": "Absolutely perfect! Great quality, beautiful design, and arrived quickly. Couldn't be happier with my purchase."
+    },
+    {
+      "type": "text",
+      "id": "review_5_name",
+      "label": "Customer name",
+      "default": "Emily S."
+    },
+    {
+      "type": "text",
+      "id": "review_5_date",
+      "label": "Date",
+      "default": "Jan 10, 2025"
+    },
+    {
+      "type": "header",
+      "content": "Review 6"
+    },
+    {
+      "type": "range",
+      "id": "review_6_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Star rating",
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "review_6_location",
+      "label": "Location",
+      "default": "New York, NY"
+    },
+    {
+      "type": "textarea",
+      "id": "review_6_text",
+      "label": "Review text",
+      "default": "Outstanding product! The quality is exceptional and it arrived faster than expected. Highly recommend!"
+    },
+    {
+      "type": "text",
+      "id": "review_6_name",
+      "label": "Customer name",
+      "default": "Sarah M."
+    },
+    {
+      "type": "text",
+      "id": "review_6_date",
+      "label": "Date",
+      "default": "Jan 8, 2025"
+    },
+    {
+      "type": "header",
+      "content": "Review 7"
+    },
+    {
+      "type": "range",
+      "id": "review_7_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Star rating",
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "review_7_location",
+      "label": "Location",
+      "default": "Boston, MA"
+    },
+    {
+      "type": "textarea",
+      "id": "review_7_text",
+      "label": "Review text",
+      "default": "Love everything about this! The design is beautiful and the quality is top-tier. Will be ordering more soon."
+    },
+    {
+      "type": "text",
+      "id": "review_7_name",
+      "label": "Customer name",
+      "default": "Rachel P."
+    },
+    {
+      "type": "text",
+      "id": "review_7_date",
+      "label": "Date",
+      "default": "Jan 5, 2025"
+    },
+    {
+      "type": "header",
+      "content": "Review 8"
+    },
+    {
+      "type": "range",
+      "id": "review_8_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Star rating",
+      "default": 4
+    },
+    {
+      "type": "text",
+      "id": "review_8_location",
+      "label": "Location",
+      "default": "Denver, CO"
+    },
+    {
+      "type": "textarea",
+      "id": "review_8_text",
+      "label": "Review text",
+      "default": "Great product overall! Very happy with my purchase. Only minor issue was packaging but the item itself is perfect."
+    },
+    {
+      "type": "text",
+      "id": "review_8_name",
+      "label": "Customer name",
+      "default": "Chris B."
+    },
+    {
+      "type": "text",
+      "id": "review_8_date",
+      "label": "Date",
+      "default": "Jan 3, 2025"
+    },
+    {
+      "type": "header",
+      "content": "Review 9"
+    },
+    {
+      "type": "range",
+      "id": "review_9_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Star rating",
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "review_9_location",
+      "label": "Location",
+      "default": "Portland, OR"
+    },
+    {
+      "type": "textarea",
+      "id": "review_9_text",
+      "label": "Review text",
+      "default": "Incredible quality and attention to detail. This exceeded my expectations in every way. Highly recommend!"
+    },
+    {
+      "type": "text",
+      "id": "review_9_name",
+      "label": "Customer name",
+      "default": "Lauren W."
+    },
+    {
+      "type": "text",
+      "id": "review_9_date",
+      "label": "Date",
+      "default": "Jan 1, 2025"
+    },
+    {
+      "type": "header",
+      "content": "Review 10"
+    },
+    {
+      "type": "range",
+      "id": "review_10_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Star rating",
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "review_10_location",
+      "label": "Location",
+      "default": "San Francisco, CA"
+    },
+    {
+      "type": "textarea",
+      "id": "review_10_text",
+      "label": "Review text",
+      "default": "Absolutely love this! The craftsmanship is amazing and it's even better than the photos. Will definitely buy again."
+    },
+    {
+      "type": "text",
+      "id": "review_10_name",
+      "label": "Customer name",
+      "default": "Mark H."
+    },
+    {
+      "type": "text",
+      "id": "review_10_date",
+      "label": "Date",
+      "default": "Dec 28, 2024"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer review carousel"
+    }
+  ]
+}
+{% endschema %}

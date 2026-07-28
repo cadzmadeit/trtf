@@ -1,0 +1,1578 @@
+{% doc %}
+  @prompt
+    Create a **premium Trustpilot-inspired Customer Reviews Section** for Shopify that matches the aesthetic of modern luxury ecommerce brands such as ICON Amsterdam, Represent, and Cole Buxton.
+    
+    The section should feel **sleek, minimal, trustworthy, conversion-focused, and high-end**, while maintaining exceptional performance and responsiveness across all devices.
+    
+    ## Design Direction
+    
+    The overall design should emphasize:
+    
+    * Clean luxury fashion brand aesthetics
+    * Strong typography hierarchy
+    * Generous whitespace
+    * Minimal visual clutter
+    * Premium user experience
+    * Trust and social proof
+    * Modern ecommerce best practices
+    
+    The section should look equally polished on desktop and mobile.
+    
+    ---
+    
+    ## Mobile-First & Responsive Requirements
+    
+    This section must be heavily optimized for both desktop and mobile layouts.
+    
+    ### Desktop Experience
+    
+    * Elegant horizontal review carousel
+    * Multiple review cards visible at once
+    * Smooth navigation arrows
+    * Balanced spacing and proportions
+    * Maximum content width controls
+    * Luxury storefront appearance
+    
+    ### Mobile Experience
+    
+    * Mobile layout must remain sleek and compact
+    * Avoid oversized review cards or excessive vertical height
+    * Reduce padding and spacing intelligently on smaller screens
+    * Keep the section visually lightweight
+    * Swipe-enabled carousel
+    * Smooth touch interactions
+    * Maintain readability without occupying excessive screen space
+    * Prevent horizontal overflow at all costs
+    * Ensure no content extends beyond viewport width
+    * Optimize for iPhone and Android devices
+    
+    The section should feel premium and efficient rather than bulky on mobile.
+    
+    ---
+    
+    ## Section Structure
+    
+    ### Trust Summary Header
+    
+    Include a trust summary area above the reviews featuring:
+    
+    * Average star rating
+    * Review count
+    * Trustpilot logo upload option
+    * Optional custom logo upload
+    * Small trust indicators
+    
+    Example:
+    
+    ★★★★★ 4.8/5
+    
+    Based on 38,000+ reviews
+    
+    Trusted by customers worldwide
+    
+    All text should be editable through theme settings.
+    
+    ---
+    
+    ## Review Carousel
+    
+    Create a smooth carousel containing review cards.
+    
+    Features:
+    
+    * Swipe support on mobile
+    * Navigation arrows on desktop
+    * Optional pagination dots
+    * Infinite looping
+    * Adjustable autoplay speed
+    * Pause autoplay on hover
+    * Smooth transitions
+    * Equal-height review cards
+    
+    ---
+    
+    ## Review Card Content
+    
+    Each review block should support:
+    
+    * Star rating (1–5)
+    * Review headline
+    * Review text
+    * Customer name
+    * Date
+    * Verified customer badge
+    * Optional customer image/avatar
+    
+    ---
+    
+    ## Review Card Styling
+    
+    Cards should feature:
+    
+    * White or customizable background
+    * Subtle borders
+    * Optional shadows
+    * Adjustable border radius
+    * Premium typography
+    * Balanced spacing
+    * Consistent card heights
+    
+    Hover effects should be subtle and modern.
+    
+    No flashy animations.
+    
+    ---
+    
+    ## Theme Editor Customization
+    
+    Create extensive customization options inside the Shopify Theme Editor.
+    
+    ### Content Controls
+    
+    * Section heading
+    * Section subheading
+    * Trust score
+    * Total review count
+    * Trustpilot logo upload
+    * Custom logo upload
+    * Up to 50 review blocks
+    
+    ### Review Block Controls
+    
+    Each review should have:
+    
+    * Customer name
+    * Review title
+    * Review text
+    * Star rating
+    * Date
+    * Verified toggle
+    * Customer image
+    
+    ### Design Controls
+    
+    * Background color
+    * Card background color
+    * Heading color
+    * Text color
+    * Star color
+    * Border color
+    * Verified badge color
+    * Section width
+    * Section padding
+    * Card padding
+    * Border radius
+    * Shadow intensity
+    * Typography sizes
+    
+    ### Carousel Controls
+    
+    * Cards per row on desktop
+    * Cards per row on tablet
+    * Cards per row on mobile
+    * Autoplay toggle
+    * Autoplay speed
+    * Arrow visibility
+    * Pagination dots visibility
+    * Infinite loop toggle
+    
+    ---
+    
+    ## Trust Bar (Optional)
+    
+    Add an optional trust bar above the reviews with editable icon/text blocks.
+    
+    Examples:
+    
+    * Fast Worldwide Shipping
+    * Easy Returns
+    * Secure Checkout
+    * 38,000+ Happy Customers
+    
+    Fully customizable within Theme Editor.
+    
+    ---
+    
+    ## Performance Requirements
+    
+    The section must be production-ready and optimized for Shopify stores.
+    
+    Requirements:
+    
+    * Native Shopify Liquid section
+    * No jQuery
+    * Lightweight vanilla JavaScript only
+    * Fast loading
+    * Lazy-loaded images
+    * Accessibility compliant
+    * Keyboard navigation support
+    * SEO-friendly structure
+    * CLS-safe layout
+    * No layout shifting
+    * No unnecessary dependencies
+    
+    ---
+    
+    ## Technical Requirements
+    
+    Generate a complete Shopify section file including:
+    
+    * Liquid
+    * CSS
+    * JavaScript
+    * Fully structured schema
+    
+    All content, styling, spacing, typography, carousel behavior, and layout settings should be editable from the Shopify Theme Editor without modifying code.
+    
+    The final result should resemble a premium Trustpilot-style review section used by luxury ecommerce brands while remaining sleek, lightweight, and highly optimized on both desktop and mobile devices.
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-reviews-section-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.section_background }};
+    padding: {{ block.settings.section_padding_mobile }}px 20px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-section-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding_desktop }}px 40px;
+    }
+  }
+
+  .ai-reviews-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.section_max_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-reviews-trust-bar-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-trust-bar-{{ ai_gen_id }} {
+      gap: 32px;
+      margin-bottom: 60px;
+    }
+  }
+
+  .ai-reviews-trust-item-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: {{ block.settings.text_color }};
+    font-weight: 500;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-trust-item-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+  }
+
+  .ai-reviews-trust-icon-{{ ai_gen_id }} {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .ai-reviews-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-header-{{ ai_gen_id }} {
+      margin-bottom: 48px;
+    }
+  }
+
+  .ai-reviews-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size_mobile }}px;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 12px 0;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size_desktop }}px;
+      margin-bottom: 16px;
+    }
+  }
+
+  .ai-reviews-subheading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subheading_size_mobile }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 24px 0;
+    line-height: 1.5;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-subheading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subheading_size_desktop }}px;
+      margin-bottom: 32px;
+    }
+  }
+
+  .ai-reviews-trust-summary-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-trust-summary-{{ ai_gen_id }} {
+      gap: 16px;
+    }
+  }
+
+  .ai-reviews-rating-display-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ai-reviews-stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 2px;
+  }
+
+  .ai-reviews-star-{{ ai_gen_id }} {
+    width: 18px;
+    height: 18px;
+    color: {{ block.settings.star_color }};
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-star-{{ ai_gen_id }} {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  .ai-reviews-score-{{ ai_gen_id }} {
+    font-weight: 700;
+    font-size: 18px;
+    color: {{ block.settings.heading_color }};
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-score-{{ ai_gen_id }} {
+      font-size: 22px;
+    }
+  }
+
+  .ai-reviews-count-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: {{ block.settings.text_color }};
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-count-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+  }
+
+  .ai-reviews-logo-{{ ai_gen_id }} {
+    max-width: 100px;
+    height: auto;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-logo-{{ ai_gen_id }} {
+      max-width: 120px;
+    }
+  }
+
+  .ai-reviews-carousel-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    margin: 0 -20px;
+    padding: 0 20px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-carousel-wrapper-{{ ai_gen_id }} {
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  .ai-reviews-carousel-{{ ai_gen_id }} {
+    display: flex;
+    gap: {{ block.settings.card_gap_mobile }}px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 20px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-carousel-{{ ai_gen_id }} {
+      gap: {{ block.settings.card_gap_desktop }}px;
+      overflow-x: hidden;
+    }
+  }
+
+  .ai-reviews-carousel-{{ ai_gen_id }}::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ai-reviews-card-{{ ai_gen_id }} {
+    flex: 0 0 calc(100% - 40px);
+    scroll-snap-align: start;
+    background-color: {{ block.settings.card_background }};
+    border: 1px solid {{ block.settings.card_border_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: {{ block.settings.card_padding_mobile }}px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    min-height: 200px;
+  }
+
+  @media screen and (min-width: 550px) {
+    .ai-reviews-card-{{ ai_gen_id }} {
+      flex: 0 0 calc(50% - {{ block.settings.card_gap_mobile | divided_by: 2 }}px);
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-card-{{ ai_gen_id }} {
+      flex: 0 0 calc((100% / {{ block.settings.cards_per_row_desktop }}) - ({{ block.settings.card_gap_desktop }} * ({{ block.settings.cards_per_row_desktop }} - 1) / {{ block.settings.cards_per_row_desktop }})px);
+      padding: {{ block.settings.card_padding_desktop }}px;
+      gap: 16px;
+    }
+  }
+
+  {% if block.settings.card_shadow_intensity > 0 %}
+    .ai-reviews-card-{{ ai_gen_id }} {
+      box-shadow: 0 {{ block.settings.card_shadow_intensity }}px {{ block.settings.card_shadow_intensity | times: 2 }}px rgba(0, 0, 0, 0.08);
+    }
+  {% endif %}
+
+  .ai-reviews-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 {{ block.settings.card_shadow_intensity | plus: 4 }}px {{ block.settings.card_shadow_intensity | times: 3 }}px rgba(0, 0, 0, 0.12);
+  }
+
+  .ai-reviews-card-header-{{ ai_gen_id }} {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .ai-reviews-avatar-{{ ai_gen_id }} {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    background-color: {{ block.settings.card_border_color }};
+  }
+
+  .ai-reviews-card-meta-{{ ai_gen_id }} {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ai-reviews-card-name-{{ ai_gen_id }} {
+    font-weight: 600;
+    font-size: 14px;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 4px 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-card-name-{{ ai_gen_id }} {
+      font-size: 15px;
+    }
+  }
+
+  .ai-reviews-card-date-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.7;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-card-date-{{ ai_gen_id }} {
+      font-size: 13px;
+    }
+  }
+
+  .ai-reviews-card-stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 2px;
+  }
+
+  .ai-reviews-card-star-{{ ai_gen_id }} {
+    width: 14px;
+    height: 14px;
+    color: {{ block.settings.star_color }};
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-card-star-{{ ai_gen_id }} {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .ai-reviews-card-title-{{ ai_gen_id }} {
+    font-weight: 600;
+    font-size: 14px;
+    color: {{ block.settings.heading_color }};
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-card-title-{{ ai_gen_id }} {
+      font-size: 16px;
+    }
+  }
+
+  .ai-reviews-card-text-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: {{ block.settings.text_color }};
+    line-height: 1.6;
+    margin: 0;
+    flex: 1;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-card-text-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+  }
+
+  .ai-reviews-verified-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: {{ block.settings.verified_color }};
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-verified-{{ ai_gen_id }} {
+      font-size: 12px;
+    }
+  }
+
+  .ai-reviews-verified-icon-{{ ai_gen_id }} {
+    width: 14px;
+    height: 14px;
+  }
+
+  .ai-reviews-nav-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-nav-{{ ai_gen_id }} {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 32px;
+    }
+  }
+
+  .ai-reviews-nav-button-{{ ai_gen_id }} {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid {{ block.settings.card_border_color }};
+    background-color: {{ block.settings.card_background }};
+    color: {{ block.settings.heading_color }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .ai-reviews-nav-button-{{ ai_gen_id }}:hover:not(:disabled) {
+    background-color: {{ block.settings.heading_color }};
+    color: {{ block.settings.card_background }};
+    border-color: {{ block.settings.heading_color }};
+  }
+
+  .ai-reviews-nav-button-{{ ai_gen_id }}:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .ai-reviews-nav-icon-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+  }
+
+  .ai-reviews-dots-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-dots-{{ ai_gen_id }} {
+      display: none;
+    }
+  }
+
+  .ai-reviews-dot-{{ ai_gen_id }} {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: {{ block.settings.card_border_color }};
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .ai-reviews-dot-{{ ai_gen_id }}.active {
+    background-color: {{ block.settings.heading_color }};
+    width: 24px;
+    border-radius: 4px;
+  }
+{% endstyle %}
+
+<customer-reviews-{{ ai_gen_id }} class="ai-reviews-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-reviews-container-{{ ai_gen_id }}">
+    {% if block.settings.show_trust_bar %}
+      <div class="ai-reviews-trust-bar-{{ ai_gen_id }}">
+        {% for i in (1..4) %}
+          {% liquid
+            assign trust_text_key = 'trust_text_' | append: i
+            assign trust_text = block.settings[trust_text_key]
+          %}
+          {% if trust_text != blank %}
+            <div class="ai-reviews-trust-item-{{ ai_gen_id }}">
+              <svg class="ai-reviews-trust-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>{{ trust_text }}</span>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="ai-reviews-header-{{ ai_gen_id }}">
+      {% if block.settings.heading != blank %}
+        <h2 class="ai-reviews-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+      {% endif %}
+
+      {% if block.settings.subheading != blank %}
+        <p class="ai-reviews-subheading-{{ ai_gen_id }}">{{ block.settings.subheading }}</p>
+      {% endif %}
+
+      <div class="ai-reviews-trust-summary-{{ ai_gen_id }}">
+        <div class="ai-reviews-rating-display-{{ ai_gen_id }}">
+          <div class="ai-reviews-stars-{{ ai_gen_id }}">
+            {% for i in (1..5) %}
+              <svg class="ai-reviews-star-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            {% endfor %}
+          </div>
+          <span class="ai-reviews-score-{{ ai_gen_id }}">{{ block.settings.trust_score }}</span>
+        </div>
+
+        {% if block.settings.review_count != blank %}
+          <p class="ai-reviews-count-{{ ai_gen_id }}">Based on {{ block.settings.review_count }} reviews</p>
+        {% endif %}
+
+        {% if block.settings.trust_logo != blank %}
+          <img src="{{ block.settings.trust_logo | image_url: width: 240 }}" alt="Trust logo" class="ai-reviews-logo-{{ ai_gen_id }}" loading="lazy">
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="ai-reviews-carousel-wrapper-{{ ai_gen_id }}">
+      <div class="ai-reviews-carousel-{{ ai_gen_id }}" data-carousel>
+        {% for i in (1..50) %}
+          {% liquid
+            assign name_key = 'customer_name_' | append: i
+            assign date_key = 'review_date_' | append: i
+            assign image_key = 'customer_image_' | append: i
+            assign rating_key = 'star_rating_' | append: i
+            assign title_key = 'review_title_' | append: i
+            assign text_key = 'review_text_' | append: i
+            assign verified_key = 'verified_' | append: i
+
+            assign customer_name = block.settings[name_key]
+            assign review_date = block.settings[date_key]
+            assign customer_image = block.settings[image_key]
+            assign star_rating = block.settings[rating_key]
+            assign review_title = block.settings[title_key]
+            assign review_text = block.settings[text_key]
+            assign verified = block.settings[verified_key]
+          %}
+
+          {% if customer_name != blank or review_text != blank %}
+            <div class="ai-reviews-card-{{ ai_gen_id }}">
+              <div class="ai-reviews-card-header-{{ ai_gen_id }}">
+                {% if customer_image != blank %}
+                  <img src="{{ customer_image | image_url: width: 80 }}" alt="{{ customer_name }}" class="ai-reviews-avatar-{{ ai_gen_id }}" loading="lazy">
+                {% else %}
+                  <div class="ai-reviews-avatar-{{ ai_gen_id }}"></div>
+                {% endif %}
+                <div class="ai-reviews-card-meta-{{ ai_gen_id }}">
+                  {% if customer_name != blank %}
+                    <h3 class="ai-reviews-card-name-{{ ai_gen_id }}">{{ customer_name }}</h3>
+                  {% endif %}
+                  {% if review_date != blank %}
+                    <p class="ai-reviews-card-date-{{ ai_gen_id }}">{{ review_date }}</p>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="ai-reviews-card-stars-{{ ai_gen_id }}">
+                {% for j in (1..star_rating) %}
+                  <svg class="ai-reviews-card-star-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                {% endfor %}
+              </div>
+
+              {% if review_title != blank %}
+                <h4 class="ai-reviews-card-title-{{ ai_gen_id }}">{{ review_title }}</h4>
+              {% endif %}
+
+              {% if review_text != blank %}
+                <p class="ai-reviews-card-text-{{ ai_gen_id }}">{{ review_text }}</p>
+              {% endif %}
+
+              {% if verified %}
+                <div class="ai-reviews-verified-{{ ai_gen_id }}">
+                  <svg class="ai-reviews-verified-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  <span>Verified Purchase</span>
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% if block.settings.show_dots %}
+        <div class="ai-reviews-dots-{{ ai_gen_id }}" data-dots></div>
+      {% endif %}
+    </div>
+
+    {% if block.settings.show_arrows %}
+      <div class="ai-reviews-nav-{{ ai_gen_id }}">
+        <button class="ai-reviews-nav-button-{{ ai_gen_id }}" data-prev aria-label="Previous reviews">
+          <svg class="ai-reviews-nav-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <button class="ai-reviews-nav-button-{{ ai_gen_id }}" data-next aria-label="Next reviews">
+          <svg class="ai-reviews-nav-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+    {% endif %}
+  </div>
+</customer-reviews-{{ ai_gen_id }}>
+
+<script>
+(function() {
+  class CustomerReviews{{ ai_gen_id }} extends HTMLElement {
+    constructor() {
+      super();
+      this.carousel = this.querySelector('[data-carousel]');
+      this.prevButton = this.querySelector('[data-prev]');
+      this.nextButton = this.querySelector('[data-next]');
+      this.dotsContainer = this.querySelector('[data-dots]');
+      this.cards = this.querySelectorAll('.ai-reviews-card-{{ ai_gen_id }}');
+      this.currentIndex = 0;
+      this.autoplayInterval = null;
+      this.cardsPerView = {{ block.settings.cards_per_row_desktop }};
+      this.autoplayEnabled = {{ block.settings.enable_autoplay }};
+      this.autoplaySpeed = {{ block.settings.autoplay_speed | times: 1000 }};
+      this.infiniteLoop = {{ block.settings.infinite_loop }};
+    }
+
+    connectedCallback() {
+      if (!this.carousel || this.cards.length === 0) return;
+
+      this.updateCardsPerView();
+      this.setupNavigation();
+      this.setupDots();
+      this.setupTouchEvents();
+      
+      if (this.autoplayEnabled) {
+        this.startAutoplay();
+      }
+
+      window.addEventListener('resize', this.handleResize.bind(this));
+    }
+
+    disconnectedCallback() {
+      this.stopAutoplay();
+      window.removeEventListener('resize', this.handleResize.bind(this));
+    }
+
+    updateCardsPerView() {
+      const width = window.innerWidth;
+      if (width < 550) {
+        this.cardsPerView = 1;
+      } else if (width < 750) {
+        this.cardsPerView = 2;
+      } else {
+        this.cardsPerView = {{ block.settings.cards_per_row_desktop }};
+      }
+    }
+
+    handleResize() {
+      this.updateCardsPerView();
+      this.updateCarousel();
+    }
+
+    setupNavigation() {
+      if (this.prevButton && this.nextButton) {
+        this.prevButton.addEventListener('click', () => {
+          this.stopAutoplay();
+          this.prev();
+          if (this.autoplayEnabled) this.startAutoplay();
+        });
+
+        this.nextButton.addEventListener('click', () => {
+          this.stopAutoplay();
+          this.next();
+          if (this.autoplayEnabled) this.startAutoplay();
+        });
+
+        this.carousel.addEventListener('mouseenter', () => this.stopAutoplay());
+        this.carousel.addEventListener('mouseleave', () => {
+          if (this.autoplayEnabled) this.startAutoplay();
+        });
+      }
+
+      this.updateNavButtons();
+    }
+
+    setupDots() {
+      if (!this.dotsContainer) return;
+
+      const totalDots = Math.ceil(this.cards.length / this.cardsPerView);
+      this.dotsContainer.innerHTML = '';
+
+      for (let i = 0; i < totalDots; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'ai-reviews-dot-{{ ai_gen_id }}';
+        dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+        if (i === 0) dot.classList.add('active');
+        
+        dot.addEventListener('click', () => {
+          this.stopAutoplay();
+          this.goToSlide(i);
+          if (this.autoplayEnabled) this.startAutoplay();
+        });
+
+        this.dotsContainer.appendChild(dot);
+      }
+    }
+
+    setupTouchEvents() {
+      let startX = 0;
+      let scrollLeft = 0;
+
+      this.carousel.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].pageX;
+        scrollLeft = this.carousel.scrollLeft;
+      });
+
+      this.carousel.addEventListener('touchmove', (e) => {
+        const x = e.touches[0].pageX;
+        const walk = (startX - x) * 2;
+        this.carousel.scrollLeft = scrollLeft + walk;
+      });
+
+      this.carousel.addEventListener('touchend', () => {
+        this.snapToCard();
+      });
+    }
+
+    snapToCard() {
+      const cardWidth = this.cards[0].offsetWidth;
+      const gap = {{ block.settings.card_gap_mobile }};
+      const scrollPosition = this.carousel.scrollLeft;
+      const index = Math.round(scrollPosition / (cardWidth + gap));
+      this.goToSlide(index);
+    }
+
+    goToSlide(index) {
+      const maxIndex = Math.ceil(this.cards.length / this.cardsPerView) - 1;
+      this.currentIndex = Math.max(0, Math.min(index, maxIndex));
+      this.updateCarousel();
+    }
+
+    updateCarousel() {
+      const cardWidth = this.cards[0].offsetWidth;
+      const gap = window.innerWidth >= 750 ? {{ block.settings.card_gap_desktop }} : {{ block.settings.card_gap_mobile }};
+      const scrollAmount = (cardWidth + gap) * this.currentIndex * this.cardsPerView;
+
+      this.carousel.scrollTo({
+        left: scrollAmount,
+        behavior: 'smooth'
+      });
+
+      this.updateNavButtons();
+      this.updateDots();
+    }
+
+    updateNavButtons() {
+      if (!this.prevButton || !this.nextButton) return;
+
+      const maxIndex = Math.ceil(this.cards.length / this.cardsPerView) - 1;
+
+      if (this.infiniteLoop) {
+        this.prevButton.disabled = false;
+        this.nextButton.disabled = false;
+      } else {
+        this.prevButton.disabled = this.currentIndex === 0;
+        this.nextButton.disabled = this.currentIndex >= maxIndex;
+      }
+    }
+
+    updateDots() {
+      if (!this.dotsContainer) return;
+
+      const dots = this.dotsContainer.querySelectorAll('.ai-reviews-dot-{{ ai_gen_id }}');
+      dots.forEach((dot, index) => {
+        if (index === this.currentIndex) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+    }
+
+    next() {
+      const maxIndex = Math.ceil(this.cards.length / this.cardsPerView) - 1;
+      
+      if (this.currentIndex >= maxIndex) {
+        if (this.infiniteLoop) {
+          this.currentIndex = 0;
+        }
+      } else {
+        this.currentIndex++;
+      }
+      
+      this.updateCarousel();
+    }
+
+    prev() {
+      const maxIndex = Math.ceil(this.cards.length / this.cardsPerView) - 1;
+      
+      if (this.currentIndex <= 0) {
+        if (this.infiniteLoop) {
+          this.currentIndex = maxIndex;
+        }
+      } else {
+        this.currentIndex--;
+      }
+      
+      this.updateCarousel();
+    }
+
+    startAutoplay() {
+      this.stopAutoplay();
+      this.autoplayInterval = setInterval(() => {
+        this.next();
+      }, this.autoplaySpeed);
+    }
+
+    stopAutoplay() {
+      if (this.autoplayInterval) {
+        clearInterval(this.autoplayInterval);
+        this.autoplayInterval = null;
+      }
+    }
+  }
+
+  customElements.define('customer-reviews-{{ ai_gen_id }}', CustomerReviews{{ ai_gen_id }});
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Customer reviews",
+  "tag": null,
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Trusted by Thousands"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "See what our customers are saying"
+    },
+    {
+      "type": "header",
+      "content": "Trust summary"
+    },
+    {
+      "type": "text",
+      "id": "trust_score",
+      "label": "Trust score",
+      "default": "4.8/5"
+    },
+    {
+      "type": "text",
+      "id": "review_count",
+      "label": "Review count",
+      "default": "38,000+"
+    },
+    {
+      "type": "image_picker",
+      "id": "trust_logo",
+      "label": "Trust logo"
+    },
+    {
+      "type": "header",
+      "content": "Trust bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_bar",
+      "label": "Show trust bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "trust_text_1",
+      "label": "Trust item 1",
+      "default": "Fast Worldwide Shipping"
+    },
+    {
+      "type": "text",
+      "id": "trust_text_2",
+      "label": "Trust item 2",
+      "default": "Easy Returns"
+    },
+    {
+      "type": "text",
+      "id": "trust_text_3",
+      "label": "Trust item 3",
+      "default": "Secure Checkout"
+    },
+    {
+      "type": "text",
+      "id": "trust_text_4",
+      "label": "Trust item 4",
+      "default": "38,000+ Happy Customers"
+    },
+    {
+      "type": "header",
+      "content": "Review 1"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_1",
+      "label": "Customer name",
+      "default": "Sarah Johnson"
+    },
+    {
+      "type": "text",
+      "id": "review_date_1",
+      "label": "Review date",
+      "default": "2 weeks ago"
+    },
+    {
+      "type": "image_picker",
+      "id": "customer_image_1",
+      "label": "Customer image"
+    },
+    {
+      "type": "range",
+      "id": "star_rating_1",
+      "label": "Star rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "review_title_1",
+      "label": "Review title",
+      "default": "Absolutely love it!"
+    },
+    {
+      "type": "textarea",
+      "id": "review_text_1",
+      "label": "Review text",
+      "default": "The quality is exceptional and the fit is perfect. Highly recommend to anyone looking for premium pieces."
+    },
+    {
+      "type": "checkbox",
+      "id": "verified_1",
+      "label": "Verified purchase",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Review 2"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_2",
+      "label": "Customer name",
+      "default": "Michael Chen"
+    },
+    {
+      "type": "text",
+      "id": "review_date_2",
+      "label": "Review date",
+      "default": "1 month ago"
+    },
+    {
+      "type": "image_picker",
+      "id": "customer_image_2",
+      "label": "Customer image"
+    },
+    {
+      "type": "range",
+      "id": "star_rating_2",
+      "label": "Star rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "review_title_2",
+      "label": "Review title",
+      "default": "Best purchase this year"
+    },
+    {
+      "type": "textarea",
+      "id": "review_text_2",
+      "label": "Review text",
+      "default": "Outstanding craftsmanship and attention to detail. Worth every penny."
+    },
+    {
+      "type": "checkbox",
+      "id": "verified_2",
+      "label": "Verified purchase",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Review 3"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_3",
+      "label": "Customer name",
+      "default": "Emma Williams"
+    },
+    {
+      "type": "text",
+      "id": "review_date_3",
+      "label": "Review date",
+      "default": "3 weeks ago"
+    },
+    {
+      "type": "image_picker",
+      "id": "customer_image_3",
+      "label": "Customer image"
+    },
+    {
+      "type": "range",
+      "id": "star_rating_3",
+      "label": "Star rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "review_title_3",
+      "label": "Review title",
+      "default": "Exceeded expectations"
+    },
+    {
+      "type": "textarea",
+      "id": "review_text_3",
+      "label": "Review text",
+      "default": "Fast shipping and the product quality is even better than I imagined. Will definitely order again."
+    },
+    {
+      "type": "checkbox",
+      "id": "verified_3",
+      "label": "Verified purchase",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Review 4"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_4",
+      "label": "Customer name",
+      "default": "James Anderson"
+    },
+    {
+      "type": "text",
+      "id": "review_date_4",
+      "label": "Review date",
+      "default": "1 week ago"
+    },
+    {
+      "type": "image_picker",
+      "id": "customer_image_4",
+      "label": "Customer image"
+    },
+    {
+      "type": "range",
+      "id": "star_rating_4",
+      "label": "Star rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "review_title_4",
+      "label": "Review title",
+      "default": "Premium quality"
+    },
+    {
+      "type": "textarea",
+      "id": "review_text_4",
+      "label": "Review text",
+      "default": "The materials feel luxurious and the design is timeless. Exactly what I was looking for."
+    },
+    {
+      "type": "checkbox",
+      "id": "verified_4",
+      "label": "Verified purchase",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Review 5"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_5",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_date_5",
+      "label": "Review date"
+    },
+    {
+      "type": "image_picker",
+      "id": "customer_image_5",
+      "label": "Customer image"
+    },
+    {
+      "type": "range",
+      "id": "star_rating_5",
+      "label": "Star rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "review_title_5",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_text_5",
+      "label": "Review text"
+    },
+    {
+      "type": "checkbox",
+      "id": "verified_5",
+      "label": "Verified purchase",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Carousel settings"
+    },
+    {
+      "type": "range",
+      "id": "cards_per_row_desktop",
+      "label": "Cards per row on desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_autoplay",
+      "label": "Enable autoplay",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Autoplay speed",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "infinite_loop",
+      "label": "Infinite loop",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show navigation arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "Show pagination dots",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "section_max_width",
+      "label": "Maximum width",
+      "min": 1000,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "section_padding_desktop",
+      "label": "Desktop padding",
+      "min": 40,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_mobile",
+      "label": "Mobile padding",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "card_gap_desktop",
+      "label": "Card gap on desktop",
+      "min": 16,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_gap_mobile",
+      "label": "Card gap on mobile",
+      "min": 12,
+      "max": 24,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "range",
+      "id": "card_padding_desktop",
+      "label": "Card padding on desktop",
+      "min": 20,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "card_padding_mobile",
+      "label": "Card padding on mobile",
+      "min": 16,
+      "max": 28,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 24,
+      "step": 4,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_intensity",
+      "label": "Card shadow intensity",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size on desktop",
+      "min": 24,
+      "max": 56,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size on mobile",
+      "min": 20,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_desktop",
+      "label": "Subheading size on desktop",
+      "min": 14,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_mobile",
+      "label": "Subheading size on mobile",
+      "min": 13,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "Section background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#141414"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#737373"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star color",
+      "default": "#FFB800"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border color",
+      "default": "#eaeaea"
+    },
+    {
+      "type": "color",
+      "id": "verified_color",
+      "label": "Verified badge color",
+      "default": "#008060"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer reviews"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,189 @@
+{% doc %}
+  @prompt
+    Create a customizable header section with a dark background and centered white text that displays "TRTFSTUDIOS | OFFICIAL SITE". The section should have a sleek, minimal design with customizable background color, text color, font size, and the ability to edit the text content. The text should be in all caps and use the theme's font family. Include options to show/hide the section and adjust padding/spacing., make the background completely black, make the background color customizable
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% if block.settings.show_section %}
+  {% style %}
+    .ai-header-section-{{ ai_gen_id }} {
+      background-color: {{ block.settings.background_color }};
+      padding: {{ block.settings.padding_top }}px 0 {{ block.settings.padding_bottom }}px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .ai-header-content-{{ ai_gen_id }} {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 0 {{ block.settings.horizontal_padding }}px;
+    }
+
+    .ai-header-text-{{ ai_gen_id }} {
+      color: {{ block.settings.text_color }};
+      font-family: {{ settings.type_header_font.family }}, {{ settings.type_header_font.fallback_families }};
+      font-weight: {{ settings.type_header_font.weight }};
+      font-style: {{ settings.type_header_font.style }};
+      font-size: {{ block.settings.font_size }}px;
+      letter-spacing: {{ block.settings.letter_spacing }}px;
+      line-height: {{ block.settings.line_height }};
+      text-transform: uppercase;
+      margin: 0;
+      word-break: break-word;
+    }
+
+    @media screen and (max-width: 749px) {
+      .ai-header-text-{{ ai_gen_id }} {
+        font-size: calc({{ block.settings.font_size }}px * {{ block.settings.mobile_font_scale | divided_by: 100.0 }});
+      }
+
+      .ai-header-content-{{ ai_gen_id }} {
+        padding: 0 {{ block.settings.horizontal_padding | times: 0.75 }}px;
+      }
+
+      .ai-header-section-{{ ai_gen_id }} {
+        padding: {{ block.settings.padding_top | times: 0.75 }}px 0 {{ block.settings.padding_bottom | times: 0.75 }}px;
+      }
+    }
+  {% endstyle %}
+
+  <div
+    class="ai-header-section-{{ ai_gen_id }}"
+    {{ block.shopify_attributes }}
+  >
+    <div class="ai-header-content-{{ ai_gen_id }}">
+      {% if block.settings.header_text != blank %}
+        <h1 class="ai-header-text-{{ ai_gen_id }}">
+          {{ block.settings.header_text }}
+        </h1>
+      {% else %}
+        <h1 class="ai-header-text-{{ ai_gen_id }}">
+          TRTFSTUDIOS | OFFICIAL SITE
+        </h1>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Custom header",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_section",
+      "label": "Show section",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "header_text",
+      "label": "Header text",
+      "default": "TRTFSTUDIOS | OFFICIAL SITE"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 12,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Font size",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "mobile_font_scale",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Mobile font scale",
+      "default": 75
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "min": -2,
+      "max": 4,
+      "step": 0.1,
+      "unit": "px",
+      "label": "Letter spacing",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "label": "Line height",
+      "default": 1.2
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "horizontal_padding",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom header"
+    }
+  ]
+}
+{% endschema %}

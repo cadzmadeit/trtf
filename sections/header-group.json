@@ -1,0 +1,334 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "t:sections.header.settings.header-group.label",
+  "sections": {
+    "1783327339154b626e": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_12019b1_xUePtn": {
+          "type": "ai_gen_block_12019b1",
+          "settings": {
+            "message_1": "FREE MYSTERY GIFT ON ORDERS OVER $100",
+            "message_2": "FREE WORLDWIDE SHIPPING",
+            "message_3": "",
+            "message_4": "",
+            "message_5": "",
+            "background_color": "#000000",
+            "text_color": "#FFFFFF",
+            "bar_height": 8,
+            "font_size": 12,
+            "font_weight": "700",
+            "auto_rotate": true,
+            "rotation_speed": 4,
+            "show_arrows": true
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_12019b1_xUePtn"
+      ],
+      "settings": {}
+    },
+    "17797714886f7c2d0d": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_177b60f_AYpGFJ": {
+          "type": "ai_gen_block_177b60f",
+          "disabled": true,
+          "settings": {
+            "message_1": "Free shipping worldwide",
+            "message_2": "New collection dropping soon",
+            "message_3": "Limited edition pieces available",
+            "message_4": "",
+            "message_5": "",
+            "link_url": "",
+            "bar_height_desktop": 45,
+            "bar_height_mobile": 35,
+            "padding_horizontal": 20,
+            "background_color": "#000000",
+            "text_color": "#ffffff",
+            "cross_color": "#ffffff",
+            "font_size_desktop": 14,
+            "font_size_mobile": 12,
+            "font_weight": "700",
+            "letter_spacing": 1,
+            "text_uppercase": true,
+            "scroll_speed": 10,
+            "pause_on_hover": true,
+            "separator_spacing": 25
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_bb09e12_Nrj7U7": {
+          "type": "ai_gen_block_bb09e12",
+          "settings": {
+            "enable_marquee": true,
+            "bar_height": 40,
+            "announcement_text_1": "LIMITED TIME OFFER",
+            "announcement_link_1": "https://pscrpt.io/9Iv8nj",
+            "announcement_text_2": "Free worldwide shipping",
+            "announcement_link_2": "shopify://collections/all",
+            "announcement_text_3": "CODE: REVERSE",
+            "announcement_link_3": "shopify://collections/all",
+            "background_color": "#000000",
+            "text_color": "#ffffff",
+            "cross_color": "#ffffff",
+            "font_size_desktop": 14,
+            "font_size_mobile": 12,
+            "font_weight": "700",
+            "letter_spacing": 1.5,
+            "text_uppercase": true,
+            "scroll_speed": 30,
+            "pause_on_hover": true,
+            "separator_spacing": 30,
+            "padding_horizontal": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_177b60f_AYpGFJ",
+        "ai_gen_block_bb09e12_Nrj7U7"
+      ],
+      "disabled": true,
+      "settings": {}
+    },
+    "blocks_NXGQCk": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_113fbb7_JDeWmi": {
+          "type": "ai_gen_block_113fbb7",
+          "settings": {
+            "show_section": true,
+            "header_text": "TRTFSTUDIOS® | OFFICIAL SITE",
+            "font_size": 12,
+            "mobile_font_scale": 75,
+            "letter_spacing": 1,
+            "line_height": 1,
+            "background_color": "#ffffff",
+            "text_color": "#141414",
+            "padding_top": 20,
+            "padding_bottom": 16,
+            "horizontal_padding": 20
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_113fbb7_JDeWmi"
+      ],
+      "disabled": true,
+      "name": "Custom header",
+      "settings": {}
+    },
+    "blocks_BYTX4h": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_0bf5f3e_4rzVQa": {
+          "type": "ai_gen_block_0bf5f3e",
+          "settings": {
+            "background_color": "#ffffff",
+            "text_color": "#141414",
+            "icon_color": "#141414",
+            "padding_vertical": 12,
+            "padding_horizontal": 20,
+            "item_spacing": 40,
+            "icon_text_spacing": 8,
+            "font_size": 14,
+            "icon_size": 20,
+            "font_weight": "500",
+            "mobile_layout": "fit",
+            "mobile_padding_vertical": 10,
+            "mobile_padding_horizontal": 16,
+            "mobile_item_spacing": 20,
+            "mobile_icon_text_spacing": 6,
+            "mobile_font_size": 12,
+            "mobile_icon_size": 16,
+            "item_1_enabled": true,
+            "item_1_icon": "shipping",
+            "item_1_text": "Free Shipping",
+            "item_2_enabled": true,
+            "item_2_icon": "gift",
+            "item_2_text": "Free Mystery Item",
+            "item_3_enabled": true,
+            "item_3_icon": "shield",
+            "item_3_text": "Secure Payments"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_0bf5f3e_4rzVQa"
+      ],
+      "disabled": true,
+      "name": "Announcement bar",
+      "settings": {}
+    },
+    "1759112575449967d0": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_485d508_8YDqdd": {
+          "type": "ai_gen_block_485d508",
+          "settings": {
+            "announcement_1": "Free shipping on all orders",
+            "announcement_2": "all orders come with a free chain",
+            "announcement_3": "vip members get 15% off",
+            "announcement_4": "",
+            "announcement_5": "",
+            "autoplay": true,
+            "autoplay_speed": 3000,
+            "fade_duration": 0.5,
+            "show_arrows": true,
+            "show_close_button": true,
+            "arrow_size": 18,
+            "arrow_color": "#ffffff",
+            "arrow_hover_color": "#ffffff",
+            "arrow_hover_background": "#ffffff1a",
+            "background_color": "#000000",
+            "text_color": "#ffffff",
+            "text_alignment": "center",
+            "font_size": 16,
+            "padding_vertical": 16,
+            "padding_horizontal": 32
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_485d508_8YDqdd"
+      ],
+      "disabled": true,
+      "settings": {}
+    },
+    "blocks_h9NaHj": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_0610aec_XUkLd4": {
+          "type": "ai_gen_block_0610aec",
+          "disabled": true,
+          "settings": {
+            "background_color": "#000000",
+            "text_color": "#ffffff",
+            "font_family": "inter_n8",
+            "font_size": 14,
+            "icon_size": 18,
+            "padding": 12,
+            "transition_speed": 30,
+            "announcement_1_enabled": true,
+            "announcement_1_text": "Free Shipping",
+            "announcement_1_icon": "none",
+            "announcement_2_enabled": true,
+            "announcement_2_text": "Free Mystery Item",
+            "announcement_2_icon": "gift",
+            "announcement_3_enabled": true,
+            "announcement_3_text": "Secure Payments",
+            "announcement_3_icon": "secure"
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_dec9c98_NJXWad": {
+          "type": "ai_gen_block_dec9c98",
+          "settings": {
+            "background_color": "#141414",
+            "text_color": "#ffffff",
+            "font_size": 14,
+            "icon_size": 18,
+            "scroll_speed": 50,
+            "announcement_1_enabled": true,
+            "announcement_1_text": "free shipping",
+            "announcement_1_icon": "shipping",
+            "announcement_2_enabled": true,
+            "announcement_2_text": "Free Mystery Gift in orders over $100",
+            "announcement_2_icon": "gift",
+            "announcement_3_enabled": true,
+            "announcement_3_text": "Secure Checkout",
+            "announcement_3_icon": "security"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_0610aec_XUkLd4",
+        "ai_gen_block_dec9c98_NJXWad"
+      ],
+      "disabled": true,
+      "name": "Announcement banner",
+      "settings": {}
+    },
+    "blocks_GNMaxq": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_2b0fb0b_RTDBDk": {
+          "type": "ai_gen_block_2b0fb0b",
+          "disabled": true,
+          "settings": {
+            "background_color": "#000000",
+            "text_color": "#000000",
+            "banner_height": 40,
+            "font_size": 11,
+            "icon_size": 18,
+            "show_navigation": true,
+            "show_close_button": false,
+            "auto_rotate": true,
+            "rotation_speed": 5000,
+            "transition_speed": 400,
+            "show_announcement_1": true,
+            "announcement_1_text": "Free shipping",
+            "show_announcement_1_icon": true,
+            "announcement_1_icon": "shipping",
+            "show_announcement_2": true,
+            "announcement_2_text": "Free mystery item",
+            "show_announcement_2_icon": true,
+            "announcement_2_icon": "gift",
+            "show_announcement_3": true,
+            "announcement_3_text": "Secure payments",
+            "show_announcement_3_icon": true,
+            "announcement_3_icon": "security"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_2b0fb0b_RTDBDk"
+      ],
+      "name": "Announcement banner",
+      "settings": {}
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "height": 60,
+        "logo": "shopify://shop_images/image_1.png",
+        "logo_width": 85,
+        "menu": "main-menu",
+        "color_scheme": "",
+        "info_menu": "",
+        "enable_country_selector": false,
+        "enable_language_selector": true,
+        "sticky_header_type": "none",
+        "logo_position": "center",
+        "enable_search": false
+      }
+    }
+  },
+  "order": [
+    "1783327339154b626e",
+    "17797714886f7c2d0d",
+    "blocks_NXGQCk",
+    "blocks_BYTX4h",
+    "1759112575449967d0",
+    "blocks_h9NaHj",
+    "blocks_GNMaxq",
+    "header"
+  ]
+}

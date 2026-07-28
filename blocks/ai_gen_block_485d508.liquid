@@ -1,0 +1,516 @@
+{% doc %}
+  @prompt
+    create a annoucment banner that is fully customizable with an arrow that can make it fade into the next annoucment., make the font the same as the theme, the font should be in all caps and it should be the same font in the first slideshow section that is also ai generated. make the x so that the arrows are not covering it, the font size doesnt change when i edit it, fix that. make it so all text is in one line and when it starts filling the space it gets smaller so it all fits in one line.
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-announcement-banner-{{ ai_gen_id }} {
+    background-color: {{ block.settings.background_color }};
+    color: {{ block.settings.text_color }};
+    padding: {{ block.settings.padding_vertical }}px {{ block.settings.padding_horizontal }}px;
+    position: relative;
+    overflow: hidden;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-announcement-banner-content-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    padding-right: {{ block.settings.show_close_button | default: false | if: '50px', '0px' }};
+  }
+
+  .ai-announcement-slider-{{ ai_gen_id }} {
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+  }
+
+  .ai-announcement-slide-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: {{ block.settings.text_alignment }};
+    opacity: 0;
+    transition: opacity {{ block.settings.fade_duration }}s ease-in-out;
+    font-family: {{ settings.type_section_header_font.family }}, {{ settings.type_section_header_font.fallback_families }};
+    font-style: {{ settings.type_section_header_font.style }};
+    font-weight: {{ settings.type_section_header_font.weight }};
+    font-size: {{ block.settings.font_size }}px;
+    text-transform: {{ settings.type_section_header_text_transform }};
+    letter-spacing: {{ settings.type_header_letter_spacing }}px;
+    line-height: {{ settings.type_header_line_height }};
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ai-announcement-slide-{{ ai_gen_id }}.active {
+    opacity: 1;
+  }
+
+  .ai-announcement-arrow-{{ ai_gen_id }} {
+    background: none;
+    border: none;
+    color: {{ block.settings.arrow_color }};
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+  }
+
+  .ai-announcement-arrow-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.arrow_hover_background }};
+    color: {{ block.settings.arrow_hover_color }};
+  }
+
+  .ai-announcement-arrow-{{ ai_gen_id }} svg {
+    width: {{ block.settings.arrow_size }}px;
+    height: {{ block.settings.arrow_size }}px;
+  }
+
+  .ai-announcement-arrow-prev-{{ ai_gen_id }} {
+    transform: rotate(180deg);
+  }
+
+  .ai-announcement-close-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: {{ block.settings.text_color }};
+    cursor: pointer;
+    padding: 4px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+  }
+
+  .ai-announcement-close-{{ ai_gen_id }}:hover {
+    opacity: 1;
+  }
+
+  .ai-announcement-close-{{ ai_gen_id }} svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .ai-announcement-banner-{{ ai_gen_id }}.hidden {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-announcement-banner-{{ ai_gen_id }} {
+      padding: {{ block.settings.padding_vertical | times: 0.8 }}px {{ block.settings.padding_horizontal | times: 0.8 }}px;
+    }
+
+    .ai-announcement-banner-content-{{ ai_gen_id }} {
+      gap: 10px;
+      padding-right: {{ block.settings.show_close_button | default: false | if: '40px', '0px' }};
+    }
+
+    .ai-announcement-arrow-{{ ai_gen_id }} {
+      width: 32px;
+      height: 32px;
+    }
+
+    .ai-announcement-close-{{ ai_gen_id }} {
+      right: 12px;
+    }
+  }
+{% endstyle %}
+
+<announcement-banner-{{ ai_gen_id }}
+  class="ai-announcement-banner-{{ ai_gen_id }}"
+  data-autoplay="{{ block.settings.autoplay }}"
+  data-autoplay-speed="{{ block.settings.autoplay_speed }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-announcement-banner-content-{{ ai_gen_id }}">
+    {% if block.settings.show_arrows %}
+      <button
+        class="ai-announcement-arrow-{{ ai_gen_id }} ai-announcement-arrow-prev-{{ ai_gen_id }}"
+        aria-label="Previous announcement"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    {% endif %}
+
+    <div class="ai-announcement-slider-{{ ai_gen_id }}">
+      {% assign announcements = '' %}
+      {% if block.settings.announcement_1 != blank %}
+        {% assign announcements = announcements | append: block.settings.announcement_1 | append: '|' %}
+      {% endif %}
+      {% if block.settings.announcement_2 != blank %}
+        {% assign announcements = announcements | append: block.settings.announcement_2 | append: '|' %}
+      {% endif %}
+      {% if block.settings.announcement_3 != blank %}
+        {% assign announcements = announcements | append: block.settings.announcement_3 | append: '|' %}
+      {% endif %}
+      {% if block.settings.announcement_4 != blank %}
+        {% assign announcements = announcements | append: block.settings.announcement_4 | append: '|' %}
+      {% endif %}
+      {% if block.settings.announcement_5 != blank %}
+        {% assign announcements = announcements | append: block.settings.announcement_5 %}
+      {% endif %}
+
+      {% assign announcement_array = announcements | split: '|' %}
+      
+      {% if announcement_array.size > 0 %}
+        {% for announcement in announcement_array %}
+          {% if announcement != blank %}
+            <div class="ai-announcement-slide-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}">
+              {{ announcement }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <div class="ai-announcement-slide-{{ ai_gen_id }} active">
+          Add your first announcement message
+        </div>
+      {% endif %}
+    </div>
+
+    {% if block.settings.show_arrows %}
+      <button
+        class="ai-announcement-arrow-{{ ai_gen_id }} ai-announcement-arrow-next-{{ ai_gen_id }}"
+        aria-label="Next announcement"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    {% endif %}
+  </div>
+
+  {% if block.settings.show_close_button %}
+    <button
+      class="ai-announcement-close-{{ ai_gen_id }}"
+      aria-label="Close announcement"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  {% endif %}
+</announcement-banner-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AnnouncementBanner{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentSlide = 0;
+        this.slides = [];
+        this.autoplayInterval = null;
+        this.baseFontSize = {{ block.settings.font_size }};
+      }
+
+      connectedCallback() {
+        this.slides = this.querySelectorAll('.ai-announcement-slide-{{ ai_gen_id }}');
+        this.prevButton = this.querySelector('.ai-announcement-arrow-prev-{{ ai_gen_id }}');
+        this.nextButton = this.querySelector('.ai-announcement-arrow-next-{{ ai_gen_id }}');
+        this.closeButton = this.querySelector('.ai-announcement-close-{{ ai_gen_id }}');
+        this.slider = this.querySelector('.ai-announcement-slider-{{ ai_gen_id }}');
+
+        if (this.slides.length <= 1) {
+          if (this.prevButton) this.prevButton.style.display = 'none';
+          if (this.nextButton) this.nextButton.style.display = 'none';
+        }
+
+        this.setupEventListeners();
+        this.setupAutoplay();
+        this.adjustFontSizes();
+        
+        window.addEventListener('resize', () => this.adjustFontSizes());
+      }
+
+      disconnectedCallback() {
+        this.clearAutoplay();
+        window.removeEventListener('resize', () => this.adjustFontSizes());
+      }
+
+      adjustFontSizes() {
+        this.slides.forEach(slide => {
+          slide.style.fontSize = this.baseFontSize + 'px';
+          
+          const sliderWidth = this.slider.offsetWidth;
+          const textWidth = slide.scrollWidth;
+          
+          if (textWidth > sliderWidth) {
+            const ratio = sliderWidth / textWidth;
+            const newFontSize = Math.max(this.baseFontSize * ratio * 0.95, this.baseFontSize * 0.6);
+            slide.style.fontSize = newFontSize + 'px';
+          }
+        });
+      }
+
+      setupEventListeners() {
+        if (this.prevButton) {
+          this.prevButton.addEventListener('click', () => this.previousSlide());
+        }
+
+        if (this.nextButton) {
+          this.nextButton.addEventListener('click', () => this.nextSlide());
+        }
+
+        if (this.closeButton) {
+          this.closeButton.addEventListener('click', () => this.closeBanner());
+        }
+
+        this.addEventListener('mouseenter', () => this.clearAutoplay());
+        this.addEventListener('mouseleave', () => this.setupAutoplay());
+      }
+
+      setupAutoplay() {
+        const autoplay = this.dataset.autoplay === 'true';
+        const speed = parseInt(this.dataset.autoplaySpeed) || 3000;
+
+        if (autoplay && this.slides.length > 1) {
+          this.autoplayInterval = setInterval(() => {
+            this.nextSlide();
+          }, speed);
+        }
+      }
+
+      clearAutoplay() {
+        if (this.autoplayInterval) {
+          clearInterval(this.autoplayInterval);
+          this.autoplayInterval = null;
+        }
+      }
+
+      showSlide(index) {
+        this.slides.forEach((slide, i) => {
+          slide.classList.toggle('active', i === index);
+        });
+        this.currentSlide = index;
+        setTimeout(() => this.adjustFontSizes(), 50);
+      }
+
+      nextSlide() {
+        const nextIndex = (this.currentSlide + 1) % this.slides.length;
+        this.showSlide(nextIndex);
+      }
+
+      previousSlide() {
+        const prevIndex = this.currentSlide === 0 ? this.slides.length - 1 : this.currentSlide - 1;
+        this.showSlide(prevIndex);
+      }
+
+      closeBanner() {
+        this.classList.add('hidden');
+        this.clearAutoplay();
+      }
+    }
+
+    customElements.define('announcement-banner-{{ ai_gen_id }}', AnnouncementBanner{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Announcement banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Announcements"
+    },
+    {
+      "type": "text",
+      "id": "announcement_1",
+      "label": "Announcement 1",
+      "default": "Free shipping on orders over $50"
+    },
+    {
+      "type": "text",
+      "id": "announcement_2",
+      "label": "Announcement 2"
+    },
+    {
+      "type": "text",
+      "id": "announcement_3",
+      "label": "Announcement 3"
+    },
+    {
+      "type": "text",
+      "id": "announcement_4",
+      "label": "Announcement 4"
+    },
+    {
+      "type": "text",
+      "id": "announcement_5",
+      "label": "Announcement 5"
+    },
+    {
+      "type": "header",
+      "content": "Autoplay settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Enable autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 1000,
+      "max": 9000,
+      "step": 500,
+      "unit": "ms",
+      "label": "Autoplay speed",
+      "default": 3000
+    },
+    {
+      "type": "range",
+      "id": "fade_duration",
+      "min": 0.3,
+      "max": 2.0,
+      "step": 0.1,
+      "unit": "s",
+      "label": "Fade duration",
+      "default": 0.5
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show navigation arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_close_button",
+      "label": "Show close button",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "arrow_size",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Arrow size",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Arrow color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "arrow_hover_color",
+      "label": "Arrow hover color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "arrow_hover_background",
+      "label": "Arrow hover background",
+      "default": "rgba(255, 255, 255, 0.1)"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 32
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement banner"
+    }
+  ]
+}
+{% endschema %}

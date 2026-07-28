@@ -1,0 +1,471 @@
+{% doc %}
+  @prompt
+    "Create a new announcement bar section for my Shopify store with the following specs:
+    Structure:
+    
+    Thin full-width bar that sits above the main header (logo/menu/cart row)
+    Left and right arrow icons for manually navigating between messages
+    Center-aligned text that rotates through multiple messages (e.g. 'ORDERS SHIP SAME DAY', 'FREE SHIPPING', 'FREE MYSTERY GIFT')
+    Auto-rotate through messages every 4-5 seconds, but also allow manual navigation via the arrows
+    
+    Animation:
+    
+    When switching between messages, use a flip-down fade transition: the current text fades out while rotating/flipping slightly downward on the X-axis, and the new text flips in and fades in from the same downward rotation, like a small card flip
+    Keep the animation quick and smooth (around 400-500ms), not jarring or slow
+    Animation should trigger both on auto-rotate and on manual arrow click
+    
+    Style:
+    
+    Black background, white uppercase bold text, small font size (thin bar, minimal height)
+    Arrows should be small, white, minimal (chevron style), positioned at far left and far right edges
+    Bar should be sticky-compatible (able to sit above header without pushing content awkwardly)
+    
+    Customization (editable via theme customizer):
+    
+    Add/remove/reorder multiple messages
+    Toggle auto-rotate on/off
+    Adjust rotation speed
+    Background color and text color
+    Show/hide arrows
+    
+    Make this a standalone, reusable section that sits above my main header, optimized for both mobile and desktop."
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-announcement-bar-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    color: {{ block.settings.text_color }};
+    position: relative;
+    overflow: hidden;
+    padding: {{ block.settings.bar_height }}px 0;
+  }
+
+  .ai-announcement-bar-container-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-announcement-bar-arrow-{{ ai_gen_id }} {
+    background: none;
+    border: none;
+    color: {{ block.settings.text_color }};
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+    position: absolute;
+    z-index: 2;
+  }
+
+  .ai-announcement-bar-arrow-{{ ai_gen_id }}:hover {
+    opacity: 1;
+  }
+
+  .ai-announcement-bar-arrow-{{ ai_gen_id }}:focus-visible {
+    outline: 2px solid {{ block.settings.text_color }};
+    outline-offset: 2px;
+  }
+
+  .ai-announcement-bar-arrow-{{ ai_gen_id }}--prev {
+    left: 10px;
+  }
+
+  .ai-announcement-bar-arrow-{{ ai_gen_id }}--next {
+    right: 10px;
+  }
+
+  {% unless block.settings.show_arrows %}
+    .ai-announcement-bar-arrow-{{ ai_gen_id }} {
+      display: none;
+    }
+  {% endunless %}
+
+  .ai-announcement-bar-arrow-{{ ai_gen_id }} svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2.5;
+  }
+
+  .ai-announcement-bar-messages-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    height: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px;
+  }
+
+  .ai-announcement-bar-message-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+    font-size: {{ block.settings.font_size }}px;
+    font-weight: {{ block.settings.font_weight }};
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+    transform-origin: center top;
+  }
+
+  .ai-announcement-bar-message-{{ ai_gen_id }}.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) rotateX(0deg);
+  }
+
+  .ai-announcement-bar-message-{{ ai_gen_id }}.exit {
+    animation: ai-announcement-flip-out-{{ ai_gen_id }} 0.4s ease forwards;
+  }
+
+  .ai-announcement-bar-message-{{ ai_gen_id }}.enter {
+    animation: ai-announcement-flip-in-{{ ai_gen_id }} 0.4s ease forwards;
+  }
+
+  @keyframes ai-announcement-flip-out-{{ ai_gen_id }} {
+    0% {
+      opacity: 1;
+      transform: translate(-50%, -50%) rotateX(0deg);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -50%) rotateX(90deg);
+      visibility: hidden;
+    }
+  }
+
+  @keyframes ai-announcement-flip-in-{{ ai_gen_id }} {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -50%) rotateX(-90deg);
+      visibility: visible;
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -50%) rotateX(0deg);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-announcement-bar-message-{{ ai_gen_id }} {
+      font-size: {{ block.settings.font_size | times: 0.85 }}px;
+    }
+
+    .ai-announcement-bar-arrow-{{ ai_gen_id }} svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .ai-announcement-bar-container-{{ ai_gen_id }} {
+      padding: 0 50px;
+    }
+  }
+{% endstyle %}
+
+<announcement-bar-{{ ai_gen_id }}
+  class="ai-announcement-bar-{{ ai_gen_id }}"
+  data-auto-rotate="{{ block.settings.auto_rotate }}"
+  data-rotation-speed="{{ block.settings.rotation_speed }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-announcement-bar-container-{{ ai_gen_id }}">
+    {% if block.settings.show_arrows %}
+      <button
+        class="ai-announcement-bar-arrow-{{ ai_gen_id }} ai-announcement-bar-arrow-{{ ai_gen_id }}--prev"
+        aria-label="Previous message"
+        data-direction="prev"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+    {% endif %}
+
+    <div class="ai-announcement-bar-messages-{{ ai_gen_id }}">
+      {% assign messages = block.settings.message_1 | append: '|' | append: block.settings.message_2 | append: '|' | append: block.settings.message_3 | append: '|' | append: block.settings.message_4 | append: '|' | append: block.settings.message_5 | split: '|' %}
+      {% assign message_count = 0 %}
+      {% for message in messages %}
+        {% if message != blank %}
+          <div
+            class="ai-announcement-bar-message-{{ ai_gen_id }} {% if message_count == 0 %}active{% endif %}"
+            data-message-index="{{ message_count }}"
+          >
+            {{ message }}
+          </div>
+          {% assign message_count = message_count | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {% if block.settings.show_arrows %}
+      <button
+        class="ai-announcement-bar-arrow-{{ ai_gen_id }} ai-announcement-bar-arrow-{{ ai_gen_id }}--next"
+        aria-label="Next message"
+        data-direction="next"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    {% endif %}
+  </div>
+</announcement-bar-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AnnouncementBar{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentIndex = 0;
+        this.messages = Array.from(this.querySelectorAll('.ai-announcement-bar-message-{{ ai_gen_id }}'));
+        this.totalMessages = this.messages.length;
+        this.autoRotate = this.dataset.autoRotate === 'true';
+        this.rotationSpeed = parseInt(this.dataset.rotationSpeed) * 1000;
+        this.rotationInterval = null;
+        this.isAnimating = false;
+      }
+
+      connectedCallback() {
+        if (this.totalMessages <= 1) return;
+
+        this.setupEventListeners();
+
+        if (this.autoRotate) {
+          this.startAutoRotation();
+        }
+      }
+
+      disconnectedCallback() {
+        this.stopAutoRotation();
+      }
+
+      setupEventListeners() {
+        const prevButton = this.querySelector('.ai-announcement-bar-arrow-{{ ai_gen_id }}--prev');
+        const nextButton = this.querySelector('.ai-announcement-bar-arrow-{{ ai_gen_id }}--next');
+
+        if (prevButton) {
+          prevButton.addEventListener('click', () => this.navigate('prev'));
+        }
+
+        if (nextButton) {
+          nextButton.addEventListener('click', () => this.navigate('next'));
+        }
+      }
+
+      navigate(direction) {
+        if (this.isAnimating) return;
+
+        this.stopAutoRotation();
+
+        const nextIndex = direction === 'next'
+          ? (this.currentIndex + 1) % this.totalMessages
+          : (this.currentIndex - 1 + this.totalMessages) % this.totalMessages;
+
+        this.switchMessage(nextIndex);
+
+        if (this.autoRotate) {
+          this.startAutoRotation();
+        }
+      }
+
+      switchMessage(nextIndex) {
+        if (this.isAnimating || nextIndex === this.currentIndex) return;
+
+        this.isAnimating = true;
+
+        const currentMessage = this.messages[this.currentIndex];
+        const nextMessage = this.messages[nextIndex];
+
+        currentMessage.classList.remove('active');
+        currentMessage.classList.add('exit');
+
+        setTimeout(() => {
+          currentMessage.classList.remove('exit');
+          nextMessage.classList.add('enter');
+
+          setTimeout(() => {
+            nextMessage.classList.remove('enter');
+            nextMessage.classList.add('active');
+            this.currentIndex = nextIndex;
+            this.isAnimating = false;
+          }, 400);
+        }, 50);
+      }
+
+      startAutoRotation() {
+        this.stopAutoRotation();
+        this.rotationInterval = setInterval(() => {
+          const nextIndex = (this.currentIndex + 1) % this.totalMessages;
+          this.switchMessage(nextIndex);
+        }, this.rotationSpeed);
+      }
+
+      stopAutoRotation() {
+        if (this.rotationInterval) {
+          clearInterval(this.rotationInterval);
+          this.rotationInterval = null;
+        }
+      }
+    }
+
+    customElements.define('announcement-bar-{{ ai_gen_id }}', AnnouncementBar{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Messages"
+    },
+    {
+      "type": "text",
+      "id": "message_1",
+      "label": "Message 1",
+      "default": "ORDERS SHIP SAME DAY"
+    },
+    {
+      "type": "text",
+      "id": "message_2",
+      "label": "Message 2",
+      "default": "FREE SHIPPING ON ALL ORDERS"
+    },
+    {
+      "type": "text",
+      "id": "message_3",
+      "label": "Message 3",
+      "default": "FREE MYSTERY GIFT WITH PURCHASE"
+    },
+    {
+      "type": "text",
+      "id": "message_4",
+      "label": "Message 4"
+    },
+    {
+      "type": "text",
+      "id": "message_5",
+      "label": "Message 5"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "bar_height",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Bar padding",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extra bold"
+        }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "header",
+      "content": "Rotation"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_rotate",
+      "label": "Auto-rotate messages",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "rotation_speed",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Rotation speed",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show navigation arrows",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement bar"
+    }
+  ]
+}
+{% endschema %}

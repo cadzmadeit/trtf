@@ -1,0 +1,233 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "1751849811c474e10b": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_3caf02c_KeinLx": {
+          "type": "ai_gen_block_3caf02c",
+          "settings": {
+            "prefix_text": "Currently viewing:",
+            "suffix_text": "people",
+            "min_viewers": 16,
+            "max_viewers": 29,
+            "min_interval": 5,
+            "max_interval": 5,
+            "bullet_color": "#87ceeb",
+            "text_color": "#333333",
+            "number_color": "#ff0000"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_3caf02c_KeinLx"
+      ],
+      "settings": {}
+    },
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button",
+            "show_size_guide": false,
+            "size_guide_header": "Header",
+            "size_guide_decription": "",
+            "size_guide_text": "Size Guide",
+            "page": ""
+          }
+        },
+        "custom_liquid_ei4cNT": {
+          "type": "custom_liquid",
+          "disabled": true,
+          "settings": {
+            "custom_liquid": "<style>\n  @keyframes blink-animation {\n    0% { opacity: 1; }\n    50% { opacity: 0; }\n    100% { opacity: 1; }\n  }\n\n  .center-wrapper {\n    display: flex;\n    justify-content: center; /* Center horizontally */\n    margin-top: 10px;        /* Add margin if needed */\n  }\n\n  .red-div {\n    padding: 2px 10px;\n    border-radius: 8px;\n    display: flex;\n    align-items: center;\n    background-color: #ffe6e6;\n  }\n\n  .blink {\n    animation: blink-animation 1.5s infinite;\n    color: red;\n    font-size: 10px;\n    margin-right: 6px;\n  }\n\n  .text {\n    color: #AD0000;\n    font-weight: 500;\n    font-size: 12px;\n  }\n</style>\n\n<div class=\"center-wrapper\">\n  <div class=\"red-div\">\n    <div class=\"blink\">&#9679;</div>\n    <div class=\"text\">Only 4 left in stock</div>\n  </div>\n</div>"
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "show_quantity": false,
+            "show_gift_card_recipient": false
+          }
+        },
+        "icon_with_text_JWKtP7": {
+          "type": "icon-with-text",
+          "settings": {
+            "show_icon": false,
+            "heading": "Free Shipping - Limited Time Only"
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+            "description_heading": ""
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "price",
+        "variant_picker",
+        "custom_liquid_ei4cNT",
+        "buy_buttons",
+        "icon_with_text_JWKtP7",
+        "description"
+      ],
+      "settings": {
+        "image_gallery_collage": "thumbnail_carousel",
+        "enable_autoheight": true,
+        "desktop_alignment": "left",
+        "mobile_alignment": "after",
+        "image_fit": "contain",
+        "padding_top": "no-indent",
+        "padding_bottom": "no-indent"
+      }
+    },
+    "product-recommendations": {
+      "type": "product-recommendations",
+      "disabled": true,
+      "settings": {
+        "heading": "YOU MAY ALSO LIKE",
+        "description": "<p>Shop the Latest...</p>",
+        "autoplay": true,
+        "stop_autoplay": true,
+        "show_arrows": false,
+        "slideshow_speed": 1.1,
+        "slideshow_delay": 3,
+        "button_label": "SHOP ALL",
+        "button_link": "shopify://collections/all",
+        "button_style": "primary",
+        "image_ratio": "portrait",
+        "image_fit": "contain",
+        "show_two_cards": true,
+        "show_collection_name": true,
+        "show_secondary_image": true,
+        "show_sku": false,
+        "show_vendor": false,
+        "show_color_swatch": false,
+        "show_desc": false,
+        "margin_top": "no-indent",
+        "margin_bottom": "xs"
+      }
+    },
+    "collapsible_content_63TbxM": {
+      "type": "collapsible-content",
+      "blocks": {
+        "text_block_JiawNH": {
+          "type": "text-block",
+          "settings": {
+            "block_heading": "SHIPPING & DELIVERY",
+            "text": "<h3>Pre-Order Information</h3><p>This is a pre-order. Please allow 2-5 weeks for production.</p><p><strong>Free Shipping:</strong> Limited time only.</p><p><strong>Real-Time Updates:</strong> Receive order status notifications via email and SMS.</p><p><strong>Need Help?</strong> Our team is ready to assist! Contact us anytime.</p>"
+          }
+        },
+        "text_block_fbkrKE": {
+          "type": "text-block",
+          "settings": {
+            "block_heading": "CARE INSTRUCTIONS",
+            "text": "<p>Wash cold.</p><p>Gentle cycle. </p><p>Low heat iron if needed. </p>"
+          }
+        },
+        "text_block_H4HJAe": {
+          "type": "text-block",
+          "settings": {
+            "block_heading": "<strong>GARMENT DETAILS</strong>",
+            "text": "<p>Description</p>"
+          }
+        },
+        "text_block_znL8ji": {
+          "type": "text-block",
+          "settings": {
+            "block_heading": "SIZE GUIDE",
+            "text": "<p>SIZING CHART AT THE END OF PHOTO SLIDESHOW</p>"
+          }
+        }
+      },
+      "block_order": [
+        "text_block_JiawNH",
+        "text_block_fbkrKE",
+        "text_block_H4HJAe",
+        "text_block_znL8ji"
+      ],
+      "disabled": true,
+      "settings": {
+        "color_scheme": "",
+        "heading": "MORE INFO",
+        "description": "",
+        "button_label": "",
+        "button_link": "",
+        "button_style": "primary",
+        "margin_top": "no-indent",
+        "margin_bottom": "no-indent",
+        "padding_top": "no-indent",
+        "padding_bottom": "no-indent",
+        "enable_border_top": false,
+        "enable_border_bottom": false
+      }
+    },
+    "collapsible_content_hyVdCW": {
+      "type": "collapsible-content",
+      "blocks": {
+        "text_block_LfPVdx": {
+          "type": "text-block",
+          "settings": {
+            "block_heading": "SHIPPING & DELIVERY",
+            "text": "<p>Fast & Reliable Worldwide Shipping Please allow 4-5 business days for order processing and verification, then an additional 4-6 business days for delivery. Once shipped, you'll receive an email with tracking details. Pre-orders may take 21-32 days.</p>"
+          }
+        },
+        "text_block_FwLLPM": {
+          "type": "text-block",
+          "settings": {
+            "block_heading": "REFUNDS & EXCHANGES",
+            "text": "<p>All Sales Are Final At This Time. Unless the item sent is flawed or sent in the wrong size. Please review your order carefully before purchasing.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "text_block_LfPVdx",
+        "text_block_FwLLPM"
+      ],
+      "name": "t:sections.collapsible-content.name",
+      "settings": {
+        "color_scheme": "",
+        "heading": "",
+        "description": "F.A.Q",
+        "button_label": "",
+        "button_link": "",
+        "button_style": "primary",
+        "margin_top": "xs",
+        "margin_bottom": "xs",
+        "padding_top": "no-indent",
+        "padding_bottom": "no-indent",
+        "enable_border_top": false,
+        "enable_border_bottom": false
+      }
+    }
+  },
+  "order": [
+    "1751849811c474e10b",
+    "main",
+    "product-recommendations",
+    "collapsible_content_63TbxM",
+    "collapsible_content_hyVdCW"
+  ]
+}

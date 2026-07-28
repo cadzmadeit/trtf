@@ -1,0 +1,81 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "footer",
+  "name": "t:sections.footer.settings.footer-group.label",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "text_block_FyjRpi": {
+          "type": "text_block",
+          "settings": {
+            "heading": "TO RISE TO FEAR",
+            "text": "<p>For those that are forged by fear, not ruled by it. <br/><br/>Rise with us. For We Alone Are Risen.</p>"
+          }
+        },
+        "footer-5": {
+          "type": "subscribe",
+          "settings": {
+            "heading": "<p>SUBSCRIBE TO OUR VIP LIST</p>",
+            "newsletter_text": "<p>FOR DISCOUNTS AND EARLY ACCESS TO NEW DROPS</p>",
+            "newsletter_sub": "<p>By subscribing you agree to the Terms of Use and Privacy Policy.</p>",
+            "button_label": "SUBSCRIBE",
+            "button_style": "primary"
+          }
+        },
+        "link_list_HGyVT7": {
+          "type": "link_list",
+          "settings": {
+            "heading": "HOME",
+            "menu": "main-menu"
+          }
+        },
+        "link_list_mrHMXh": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Policies",
+            "menu": "policies"
+          }
+        },
+        "logo_info_xR73df": {
+          "type": "logo_info",
+          "disabled": true,
+          "settings": {
+            "letter_text": "",
+            "logo_width": 55
+          }
+        }
+      },
+      "block_order": [
+        "text_block_FyjRpi",
+        "footer-5",
+        "link_list_HGyVT7",
+        "link_list_mrHMXh",
+        "logo_info_xR73df"
+      ],
+      "settings": {
+        "color_scheme": "background-2",
+        "enable_language_selector": false,
+        "enable_country_selector": false,
+        "enable_follow_on_shop": false,
+        "payment_enable": true,
+        "show_policy": true,
+        "margin_top": "no-indent",
+        "padding_top": "xs",
+        "padding_bottom": "s",
+        "enable_border_top": false
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

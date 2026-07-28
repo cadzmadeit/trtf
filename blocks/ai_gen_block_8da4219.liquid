@@ -1,0 +1,934 @@
+{% doc %}
+  @prompt
+    Create an auto-sliding customer review carousel that continuously cycles through fake customer reviews every 5-7 seconds. The carousel should allow manual horizontal scrolling/swiping on both mobile and desktop, loop infinitely, and have a clean modern minimal design. Each review should include a star rating display, reviewer name, short 2-3 line review text, and optional small avatar. The carousel should be fully responsive, optimized for mobile and desktop, use CSS animations with minimal JavaScript, support touch gestures on mobile, and include 5-6 example fake reviews. Use clean styling that adjusts between screen sizes and ensure the component is lightweight and performant., optimize the reviews to be fully seen on mobile and desktop view and center everything. Remember the image i uploaded for you to reference, its good but CENTER THE REVIEWS and OPTIMIZE it for mobile AND desktop. Make it scrollable but also make it auto scroll every couple seconds, THE SCROLL BUTTONS DO NOT WORK. MAKE SURE ITS SCROLLABLE. MAKE THE ENTIRE REVIEW CENTERED AND OPTIMIZED FOR DESKTOP AND MOBILE VIEW.
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+.ai-review-carousel-{{ ai_gen_id }} {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: {{ block.settings.padding }}px 0;
+  background-color: {{ block.settings.background_color }};
+  text-align: center;
+}
+
+.ai-review-container-{{ ai_gen_id }} {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  padding: 0 20px;
+}
+
+.ai-review-track-{{ ai_gen_id }} {
+  display: flex;
+  transition: transform 0.5s ease-out;
+  touch-action: pan-x;
+}
+
+.ai-review-card-{{ ai_gen_id }} {
+  flex: 0 0 auto;
+  padding: 15px;
+  box-sizing: border-box;
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+@media screen and (min-width: 768px) {
+  .ai-review-card-{{ ai_gen_id }} {
+    width: calc(100% / {{ block.settings.desktop_visible_slides }});
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .ai-review-card-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 10px;
+  }
+}
+
+.ai-review-inner-{{ ai_gen_id }} {
+  background-color: {{ block.settings.card_background_color }};
+  border-radius: {{ block.settings.card_border_radius }}px;
+  padding: 24px;
+  width: 100%;
+  max-width: 350px;
+  min-height: 180px;
+  {% if block.settings.enable_shadow %}
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  {% endif %}
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;margin: 0 auto;
+}
+
+@media screen and (max-width: 767px) {
+  .ai-review-inner-{{ ai_gen_id }} {
+    padding: 20px;
+    max-width: 280px;
+    min-height: 160px;
+  }
+}
+
+.ai-review-header-{{ ai_gen_id }} {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.ai-review-avatar-{{ ai_gen_id }} {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  background-color: #f4f4f4;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+@media screen and (max-width: 767px) {
+  .ai-review-avatar-{{ ai_gen_id }} {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 8px;
+  }
+}
+
+.ai-review-avatar-{{ ai_gen_id }} img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ai-review-info-{{ ai_gen_id }} {
+  text-align: center;
+  width: 100%;
+}
+
+.ai-review-name-{{ ai_gen_id }} {
+  font-weight: 600;
+  font-size: {{ block.settings.name_font_size }}px;
+  margin: 0 0 8px;
+  color: {{ block.settings.name_color }};
+  text-align: center;
+}
+
+.ai-review-stars-{{ ai_gen_id }} {
+  display: flex;
+  justify-content: center;
+  color: {{ block.settings.star_color }};
+  font-size: {{ block.settings.star_size }}px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.ai-review-text-{{ ai_gen_id }} {
+  flex-grow: 1;
+  font-size: {{ block.settings.text_font_size }}px;
+  line-height: 1.5;
+  color: {{ block.settings.text_color }};
+  margin: 0;
+  text-align: center;display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+}
+
+.ai-review-nav-{{ ai_gen_id }} {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  gap: 8px;
+}
+
+.ai-review-dot-{{ ai_gen_id }} {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: {{ block.settings.dot_color }};
+  opacity: 0.3;
+  cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.ai-review-dot-{{ ai_gen_id }}.active {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.ai-review-buttons-{{ ai_gen_id }} {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  padding: 0 10px;
+  z-index: 10;
+}
+
+@media screen and (max-width: 767px) {
+  .ai-review-buttons-{{ ai_gen_id }} {
+    display: none;
+  }
+}
+
+.ai-review-button-{{ ai_gen_id }} {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: {{ block.settings.button_background_color }};
+  color: {{ block.settings.button_color }};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  opacity: 0.9;
+  transition: all 0.3s ease;
+}
+
+.ai-review-button-{{ ai_gen_id }}:hover {
+  opacity: 1;
+  transform: scale(1.1);box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.ai-review-button-{{ ai_gen_id }} svg {
+  width: 20px;
+  height: 20px;
+}
+
+.ai-review-title-{{ ai_gen_id }} {
+  font-size: {{ block.settings.title_font_size }}px;
+  font-weight: 600;
+  color: {{ block.settings.title_color }};
+  margin: 0 0 32px;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .ai-review-title-{{ ai_gen_id }} {
+    font-size: calc({{ block.settings.title_font_size }}px * 0.85);
+    margin-bottom: 24px;
+  }
+}
+
+.ai-review-scroll-hint-{{ ai_gen_id }} {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: {{ block.settings.text_color }};
+  opacity: 0.6;
+  animation: fadeInOut 3s infinite;
+  white-space: nowrap;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+@media (min-width: 768px) {
+  .ai-review-scroll-hint-{{ ai_gen_id }} {
+    display: none;
+  }
+}
+{% endstyle %}<review-carousel-{{ ai_gen_id }} class="ai-review-carousel-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.carousel_title != blank %}
+    <h2 class="ai-review-title-{{ ai_gen_id }}">{{ block.settings.carousel_title }}</h2>
+  {% endif %}<div class="ai-review-container-{{ ai_gen_id }}">
+    <div class="ai-review-track-{{ ai_gen_id }}">
+      {% for i in (1..6) %}
+        {% liquid
+          assign review_key = 'review_' | append: i
+          assign name_key = 'name_' | append: i
+          assign rating_key = 'rating_' | append: i
+          assign avatar_key = 'avatar_' | append: i
+          
+          assign review_text = block.settings[review_key]
+          assign reviewer_name = block.settings[name_key]
+          assign rating = block.settings[rating_key]
+          assign avatar = block.settings[avatar_key]
+        %}
+        
+        {% if review_text != blank and reviewer_name != blank %}
+          <div class="ai-review-card-{{ ai_gen_id }}" data-index="{{ forloop.index0 }}">
+            <div class="ai-review-inner-{{ ai_gen_id }}">
+              <div class="ai-review-header-{{ ai_gen_id }}">
+                <div class="ai-review-avatar-{{ ai_gen_id }}">
+                  {% if avatar %}
+                    <img src="{{ avatar | image_url: width: 100 }}" alt="{{ reviewer_name }}" loading="lazy" width="50" height="50">
+                  {% else %}
+                    <div style="width: 100%; height: 100%; background-color: #e0e0e0; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 10C12.0711 10 13.75 8.32107 13.75 6.25C13.75 4.17893 12.0711 2.5 10 2.5C7.92893 2.5 6.25 4.17893 6.25 6.25C6.25 8.32107 7.92893 10 10 10Z" fill="#9E9E9E"/>
+                        <path d="M10 11.25C6.25 11.25 3.125 13.3125 3.125 16.25V17.5H16.875V16.25C16.875 13.3125 13.75 11.25 10 11.25Z" fill="#9E9E9E"/>
+                      </svg>
+                    </div>
+                  {% endif %}
+                </div><div class="ai-review-info-{{ ai_gen_id }}">
+                  <h4 class="ai-review-name-{{ ai_gen_id }}">{{ reviewer_name }}</h4>
+                  <div class="ai-review-stars-{{ ai_gen_id }}">
+                    {% for j in (1..5) %}
+                      {% if j <= rating %}
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                        </svg>
+                      {% else %}
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" opacity="0.3">
+                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                        </svg>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+              <p class="ai-review-text-{{ ai_gen_id }}">{{ review_text }}</p>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    
+    <div class="ai-review-scroll-hint-{{ ai_gen_id }}">← Swipe to see more reviews →</div>
+    
+    <div class="ai-review-buttons-{{ ai_gen_id }}">
+      <button class="ai-review-button-{{ ai_gen_id }} prev" aria-label="Previous review">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <button class="ai-review-button-{{ ai_gen_id }} next" aria-label="Next review">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  <div class="ai-review-nav-{{ ai_gen_id }}"></div>
+</review-carousel-{{ ai_gen_id }}>
+
+<script>
+(function() {
+  class ReviewCarousel{{ ai_gen_id }} extends HTMLElement {
+    constructor() {
+      super();
+      this.container = this.querySelector('.ai-review-container-{{ ai_gen_id }}');
+      this.track = this.querySelector('.ai-review-track-{{ ai_gen_id }}');
+      this.cards = Array.from(this.querySelectorAll('.ai-review-card-{{ ai_gen_id }}'));
+      this.navContainer = this.querySelector('.ai-review-nav-{{ ai_gen_id }}');
+      this.prevButton = this.querySelector('.ai-review-button-{{ ai_gen_id }}.prev');
+      this.nextButton = this.querySelector('.ai-review-button-{{ ai_gen_id }}.next');
+      this.autoplayDelay = {{ block.settings.autoplay_delay | times: 1000 }};
+      this.currentIndex = 0;
+      this.autoplayTimer = null;
+      this.isDragging = false;
+      this.startX = 0;
+      this.currentX = 0;
+      this.initialTranslate = 0;
+      this.currentTranslate = 0;
+      this.animationId = 0;
+      
+      this.visibleSlides = this.getVisibleSlides();
+      this.totalSlides = this.cards.length;
+      this.maxIndex = Math.max(0, this.totalSlides - this.visibleSlides);
+      
+      if (this.totalSlides > 0) {
+        this.init();
+      }
+    }
+    
+    connectedCallback() {
+      if (this.totalSlides > 0 && !this.initialized) {
+        this.init();
+      }
+    }
+    
+    getVisibleSlides() {
+      return window.innerWidth >= 768 ? 
+        parseInt({{ block.settings.desktop_visible_slides }}) : 
+        parseInt({{ block.settings.mobile_visible_slides | default: 1 }});
+    }
+    
+    init() {
+      this.initialized = true;
+      this.createNavigationDots();
+      this.setupEventListeners();
+      this.updateCarousel();
+      this.startAutoplay();
+    }
+    
+    createNavigationDots() {
+      if (!this.navContainer) return;
+      
+      this.navContainer.innerHTML = '';
+      constdotsCount = Math.max(1, this.totalSlides - this.visibleSlides + 1);
+      
+      for (let i = 0; i < dotsCount; i++) {
+        const dot = document.createElement('div');
+        dot.classList.add('ai-review-dot-{{ ai_gen_id }}');
+        dot.dataset.index = i;
+        this.navContainer.appendChild(dot);
+        
+        dot.addEventListener('click', () => {
+          this.goToSlide(i);
+        });
+      }
+      
+      this.dots = Array.from(this.navContainer.querySelectorAll('.ai-review-dot-{{ ai_gen_id }}'));
+      this.updateDots();
+    }
+    
+    updateDots() {
+      if (!this.dots || this.dots.length === 0) return;
+      
+      this.dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === this.currentIndex);
+      });
+    }
+    
+    setupEventListeners() {
+      if (this.prevButton) {
+        this.prevButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.prevSlide();
+        });
+      }
+      
+      if (this.nextButton) {
+        this.nextButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.nextSlide();
+        });
+      }
+      
+      if (this.track) {
+        this.track.addEventListener('mousedown', this.startDrag.bind(this));
+        this.track.addEventListener('touchstart', this.startDrag.bind(this), { passive: true });
+        this.track.addEventListener('mousemove', this.drag.bind(this));
+        this.track.addEventListener('touchmove', this.drag.bind(this), { passive: false });
+        this.track.addEventListener('mouseup', this.endDrag.bind(this));
+        this.track.addEventListener('touchend', this.endDrag.bind(this));this.track.addEventListener('mouseleave', this.endDrag.bind(this));this.track.addEventListener('contextmenu', (e) => e.preventDefault());
+      }
+      
+      this.addEventListener('mouseenter', () => this.stopAutoplay());
+      this.addEventListener('mouseleave', () => this.startAutoplay());
+      this.addEventListener('touchstart', () => this.stopAutoplay(), { passive: true });
+      this.addEventListener('touchend', () => {
+        setTimeout(() => this.startAutoplay(), 1000);
+      });
+      window.addEventListener('resize', this.handleResize.bind(this));
+    }
+    
+    handleResize() {
+      const newVisibleSlides = this.getVisibleSlides();
+      if (newVisibleSlides !== this.visibleSlides) {
+        this.visibleSlides = newVisibleSlides;
+        this.maxIndex = Math.max(0, this.totalSlides - this.visibleSlides);
+        this.currentIndex = Math.min(this.currentIndex, this.maxIndex);
+        this.createNavigationDots();this.updateCarousel();
+      }
+    }
+    
+    startDrag(e) {
+      if (!this.track) return;
+      
+      this.isDragging = true;
+      this.startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+      this.initialTranslate = this.currentTranslate;
+      
+      this.track.style.transition = 'none';
+      this.stopAutoplay();
+      
+      if (e.type.includes('mouse')) {
+        e.preventDefault();
+      }
+    }
+    
+    drag(e) {
+      if (!this.isDragging || !this.track) return;
+      
+      this.currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+      const diff = this.currentX - this.startX;
+      const containerWidth = this.container.offsetWidth;
+      const percentMove = (diff / containerWidth) * 100;
+      
+      this.currentTranslate = this.initialTranslate + percentMove;
+      
+      const maxTranslate = 0;
+      const minTranslate = -(this.maxIndex * (100 / this.visibleSlides));
+      
+      this.currentTranslate = Math.max(minTranslate, Math.min(maxTranslate, this.currentTranslate));
+      
+      this.track.style.transform = `translateX(${this.currentTranslate}%)`;
+      
+      if (e.type.includes('touch')) {
+        e.preventDefault();
+      }
+    }
+    
+    endDrag() {
+      if (!this.isDragging || !this.track) return;
+      
+      this.isDragging = false;
+      this.track.style.transition = 'transform 0.5s ease-out';
+      
+      const movedPercent = this.currentTranslate - this.initialTranslate;
+      const threshold = 10;
+      
+      if (movedPercent < -threshold && this.currentIndex < this.maxIndex) {
+        this.nextSlide();
+      } else if (movedPercent > threshold && this.currentIndex > 0) {
+        this.prevSlide();
+      } else {
+        this.updateCarousel();
+      }
+      
+      setTimeout(() => this.startAutoplay(), 1000);
+    }
+    
+    prevSlide() {
+      if (this.currentIndex > 0) {
+        this.goToSlide(this.currentIndex - 1);
+      } else {
+        this.goToSlide(this.maxIndex);
+      }
+    }
+    
+    nextSlide() {
+      if (this.currentIndex < this.maxIndex) {
+        this.goToSlide(this.currentIndex + 1);
+      } else {
+        this.goToSlide(0);
+      }
+    }
+    
+    goToSlide(index) {
+      if (!this.track) return;
+      
+      this.stopAutoplay();
+      this.currentIndex = Math.max(0, Math.min(index, this.maxIndex));
+      this.updateCarousel();
+      
+      setTimeout(() => this.startAutoplay(), 1000);
+    }
+    
+    updateCarousel() {
+      if (!this.track) return;
+      
+      const translateX = -(this.currentIndex * (100 / this.visibleSlides));
+      this.track.style.transform = `translateX(${translateX}%)`;
+      this.currentTranslate = translateX;
+      
+      this.updateDots();
+    }
+    
+    startAutoplay() {
+      if ({{ block.settings.enable_autoplay | default: true | json }} && this.totalSlides > this.visibleSlides) {
+        this.stopAutoplay();
+        this.autoplayTimer = setInterval(() => {
+          this.nextSlide();
+        }, this.autoplayDelay);
+      }
+    }
+    
+    stopAutoplay() {
+      if (this.autoplayTimer) {
+        clearInterval(this.autoplayTimer);
+        this.autoplayTimer = null;
+      }
+    }
+  }
+  
+  customElements.define('review-carousel-{{ ai_gen_id }}', ReviewCarousel{{ ai_gen_id }});
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Review Carousel",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Carousel Content"
+    },
+    {
+      "type": "text",
+      "id": "carousel_title",
+      "label": "Carousel title",
+      "default": "What Our Customers Say"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "min": 16,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "label": "Title font size",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Carousel Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_autoplay",
+      "label": "Enable autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_delay",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Autoplay delay",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "desktop_visible_slides",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Visible slides on desktop",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "mobile_visible_slides",
+      "label": "Visible slides on mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Carousel padding",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Style Settings"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card background color",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_shadow",
+      "label": "Enable card shadow",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "name_color",
+      "label": "Name color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Review text color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star color",
+      "default": "#ffc107"
+    },
+    {
+      "type": "range",
+      "id": "name_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Name font size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "text_font_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Review text font size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "star_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Star size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Navigation dot color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Navigation button color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Navigation button background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Review 1"
+    },
+    {
+      "type": "text",
+      "id": "name_1",
+      "label": "Reviewer name",
+      "default": "Sarah Johnson"
+    },
+    {
+      "type": "range",
+      "id": "rating_1",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Rating",
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "review_1",
+      "label": "Review text",
+      "default": "Absolutely love this product! The quality exceeded my expectations and it arrived earlier than expected. Will definitely be purchasing again."
+    },
+    {
+      "type": "image_picker",
+      "id": "avatar_1",
+      "label": "Reviewer avatar (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Review 2"
+    },
+    {
+      "type": "text",
+      "id": "name_2",
+      "label": "Reviewer name",
+      "default": "Michael Chen"
+    },
+    {
+      "type": "range",
+      "id": "rating_2",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Rating",
+      "default": 4
+    },
+    {
+      "type": "textarea",
+      "id": "review_2",
+      "label": "Review text",
+      "default": "Great value for money. This has become an essential part of my daily routine. Customer service was also very helpful when I had questions."
+    },
+    {
+      "type": "image_picker",
+      "id": "avatar_2",
+      "label": "Reviewer avatar (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Review 3"
+    },
+    {
+      "type": "text",
+      "id": "name_3",
+      "label": "Reviewer name",
+      "default": "Emma Wilson"
+    },
+    {
+      "type": "range",
+      "id": "rating_3",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Rating",
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "review_3",
+      "label": "Review text",
+      "default": "I've tried many similar products but this one stands out. The attention to detail is impressive and it's clear they care about quality."
+    },
+    {
+      "type": "image_picker",
+      "id": "avatar_3",
+      "label": "Reviewer avatar (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Review 4"
+    },
+    {
+      "type": "text",
+      "id": "name_4",
+      "label": "Reviewer name",
+      "default": "James Rodriguez"
+    },
+    {
+      "type": "range",
+      "id": "rating_4",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Rating",
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "review_4",
+      "label": "Review text",
+      "default": "Exactly what I was looking for! The shipping was fast and the product works perfectly. Would highly recommend to anyone considering it."
+    },
+    {
+      "type": "image_picker",
+      "id": "avatar_4",
+      "label": "Reviewer avatar (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Review 5"
+    },
+    {
+      "type": "text",
+      "id": "name_5",
+      "label": "Reviewer name",
+      "default": "Olivia Thompson"
+    },
+    {
+      "type": "range",
+      "id": "rating_5",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Rating",
+      "default": 4
+    },
+    {
+      "type": "textarea",
+      "id": "review_5",
+      "label": "Review text",
+      "default": "This has made such a difference in my daily routine. Simple to use yet effective. The customer support team was also very responsive."
+    },
+    {
+      "type": "image_picker",
+      "id": "avatar_5",
+      "label": "Reviewer avatar (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Review 6"
+    },
+    {
+      "type": "text",
+      "id": "name_6",
+      "label": "Reviewer name",
+      "default": "David Kim"
+    },
+    {
+      "type": "range",
+      "id": "rating_6",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Rating",
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "review_6",
+      "label": "Review text",
+      "default": "Bought this as a gift and they absolutely loved it! The packaging was beautiful and the quality is outstanding. Will definitely buy again."
+    },
+    {
+      "type": "image_picker",
+      "id": "avatar_6",
+      "label": "Reviewer avatar (optional)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Review Carousel"
+    }
+  ]
+}
+{% endschema %}

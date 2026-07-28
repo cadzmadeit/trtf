@@ -1,0 +1,620 @@
+{% doc %}
+  @prompt
+    Create a horizontal image carousel that displays images in a clean grid-like format similar to the reference images. The carousel should automatically slide horizontally in a continuous loop without manual navigation controls. Images should be displayed in a clean, modern layout with proper spacing. On hover (desktop) or tap (mobile), show text overlays with small white text on semi-transparent black backgrounds. Images should be unclickable, autoplay smoothly with seamless looping, and include lazy loading. Focus on a clean, minimal aesthetic with smooth animations and responsive design for all screen sizes., make the images fit 804x1228 and make the slideshow NOT STOP when i hover over it. lastly, MAKE SURE the mobile view doesn't allow horizontal scrolling / zooming out. Make sure it maintains the same exact layout of mobile view while still auto sliding and having its function as a carousel, keep everything the same except make sure there's 20 images. and make it so that the caption pops up with a small slightly transparent black/grey bg on the bottom.
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-carousel-container-{{ ai_gen_id }} {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.section_padding }}px 0;
+  }
+
+  .ai-carousel-track-{{ ai_gen_id }} {
+    display: flex;
+    animation: ai-carousel-scroll-{{ ai_gen_id }} {{ block.settings.animation_speed }}s linear infinite;
+    gap: {{ block.settings.image_spacing }}px;
+  }
+
+  .ai-carousel-item-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    position: relative;
+    width: 804px;
+    height: 1228px;
+    border-radius: {{ block.settings.border_radius }}px;
+    overflow: hidden;
+    cursor: default;
+    aspect-ratio: 804/1228;
+  }
+
+  .ai-carousel-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-carousel-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-carousel-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-carousel-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 12px 16px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .ai-carousel-item-{{ ai_gen_id }}:hover .ai-carousel-overlay-{{ ai_gen_id }} {
+    transform: translateY(0);
+  }
+
+  .ai-carousel-item-{{ ai_gen_id }}:hover .ai-carousel-image-{{ ai_gen_id }} {
+    transform: scale(1.05);
+  }
+
+  @keyframes ai-carousel-scroll-{{ ai_gen_id }} {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-804px - {{ block.settings.image_spacing }}px));
+    }
+  }
+  
+  @media screen and (max-width: 1024px) {
+    .ai-carousel-item-{{ ai_gen_id }} {
+      width: 402px;
+      height: 614px;
+    }
+
+    @keyframes ai-carousel-scroll-{{ ai_gen_id }} {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(calc(-402px - {{ block.settings.image_spacing }}px));
+      }
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-carousel-item-{{ ai_gen_id }} {
+      width: 300px;
+      height: 458px;
+    }
+
+    .ai-carousel-item-{{ ai_gen_id }}:active .ai-carousel-overlay-{{ ai_gen_id }} {
+      transform: translateY(0);
+    }
+
+    .ai-carousel-item-{{ ai_gen_id }}:active .ai-carousel-image-{{ ai_gen_id }} {
+      transform: scale(1.05);
+    }
+
+    @keyframes ai-carousel-scroll-{{ ai_gen_id }} {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(calc(-300px - {{ block.settings.image_spacing }}px));
+      }
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .ai-carousel-item-{{ ai_gen_id }} {
+      width: 200px;
+      height: 305px;
+    }
+
+    @keyframes ai-carousel-scroll-{{ ai_gen_id }} {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(calc(-200px - {{ block.settings.image_spacing }}px));
+      }
+    }
+  }
+
+  /* Prevent horizontal scrolling on mobile */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
+{% endstyle %}
+
+<image-carousel-{{ ai_gen_id }}
+  class="ai-carousel-container-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-carousel-track-{{ ai_gen_id }}">
+    {% for i in (1..20) %}
+      {% liquid
+        assign image_key = 'image_' | append: i
+        assign text_key = 'text_' | append: i
+        assign image = block.settings[image_key]
+        assign text = block.settings[text_key]
+      %}
+
+      {% if image != blank %}
+        <div class="ai-carousel-item-{{ ai_gen_id }}">
+          <img
+            src="{{ image | image_url: width: 804 }}"
+            alt="{{ image.alt | escape }}"
+            width="804"
+            height="1228"
+            loading="lazy"
+            class="ai-carousel-image-{{ ai_gen_id }}"
+          >
+          {% if text != blank %}
+            <div class="ai-carousel-overlay-{{ ai_gen_id }}">
+              {{ text }}
+            </div>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="ai-carousel-item-{{ ai_gen_id }}">
+          <div class="ai-carousel-placeholder-{{ ai_gen_id }}">
+            {{ 'image' | placeholder_svg_tag }}
+          </div>
+          {% if text != blank %}
+            <div class="ai-carousel-overlay-{{ ai_gen_id }}">
+              {{ text }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    {% endfor %}
+
+    {% for i in (1..20) %}
+      {% liquid
+        assign image_key = 'image_' | append: i
+        assign text_key = 'text_' | append: i
+        assign image = block.settings[image_key]
+        assign text = block.settings[text_key]
+      %}
+
+      {% if image != blank %}
+        <div class="ai-carousel-item-{{ ai_gen_id }}">
+          <img
+            src="{{ image | image_url: width: 804 }}"
+            alt="{{ image.alt | escape }}"
+            width="804"
+            height="1228"
+            loading="lazy"
+            class="ai-carousel-image-{{ ai_gen_id }}"
+          >
+          {% if text != blank %}
+            <div class="ai-carousel-overlay-{{ ai_gen_id }}">
+              {{ text }}
+            </div>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="ai-carousel-item-{{ ai_gen_id }}">
+          <div class="ai-carousel-placeholder-{{ ai_gen_id }}">
+            {{ 'image' | placeholder_svg_tag }}
+          </div>
+          {% if text != blank %}
+            <div class="ai-carousel-overlay-{{ ai_gen_id }}">
+              {{ text }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</image-carousel-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ImageCarousel{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.setupAccessibility();
+        this.preventZoom();
+      }
+
+      setupAccessibility() {
+        const items = this.querySelectorAll('.ai-carousel-item-{{ ai_gen_id }}');
+        items.forEach((item, index) => {
+          item.setAttribute('role', 'img');
+          item.setAttribute('aria-label', `Image ${(index % 20) + 1} of 20`);
+        });
+      }
+
+      preventZoom() {
+        // Add meta tag to prevent zooming on mobile
+        if (!document.querySelector('meta[name="viewport"]')) {
+          const meta = document.createElement('meta');
+          meta.name = 'viewport';
+          meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+          document.getElementsByTagName('head')[0].appendChild(meta);
+        }
+      }
+    }
+
+    customElements.define('image-carousel-{{ ai_gen_id }}', ImageCarousel{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Image Carousel",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "image_spacing",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Image spacing",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 20,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "label": "Section padding",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "label": "Animation speed",
+      "default": 25
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_1",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_2",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_3",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_4",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_5",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_5",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_6",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_6",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_7",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_7",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 8"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_8",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_8",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 9"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_9",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_9",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 10"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_10",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_10",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 11"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_11",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_11",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 12"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_12",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_12",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 13"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_13",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_13",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 14"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_14",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_14",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 15"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_15",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_15",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 16"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_16",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_16",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 17"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_17",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_17",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 18"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_18",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_18",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 19"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_19",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_19",
+      "label": "Overlay text"
+    },
+    {
+      "type": "header",
+      "content": "Image 20"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_20",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text_20",
+      "label": "Overlay text"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image Carousel"
+    }
+  ]
+}
+{% endschema %}

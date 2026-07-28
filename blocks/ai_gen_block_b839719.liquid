@@ -1,0 +1,1585 @@
+{% doc %}
+  @prompt
+    "Create a new homepage image slideshow section for my Shopify store with the following specs:
+    Layout & Depth:
+    
+    Coverflow-style carousel: center slide is large and fully in focus, with the previous/next slides partially visible on the left and right edges, slightly smaller and dimmed/faded to create a sense of depth
+    Center image should have a subtle drop shadow or elevation effect so it visually pops forward compared to the side images
+    Side images should be cropped/peeking (only partially visible) to hint that more slides exist in that direction
+    
+    Motion:
+    
+    When transitioning between slides, use a smooth rotating/carousel motion where the side images slide inward and scale up as they become the new center slide (coverflow-style 3D rotation, not a flat fade)
+    Include left and right circular arrow buttons (white circle, black chevron icon) positioned vertically centered over the image, on the far left and right edges of the visible center slide
+    Support swipe gestures on mobile to move between slides, in addition to arrow clicks
+    Auto-rotate optional, with adjustable timing, and pause on hover/touch
+    
+    Mobile view:
+    
+    On mobile, the center image should scale down proportionally but keep the same coverflow depth effect, with the side images still peeking slightly on each edge
+    Maintain smooth touch/swipe responsiveness on mobile with the same rotation animation as desktop
+    
+    Customization (editable via theme customizer):
+    
+    Support up to 25 slides
+    Each slide has its own uploadable image (separate desktop/mobile image option)
+    Optional caption/link per slide
+    Adjustable center image size, side image visibility/crop amount, spacing between slides
+    Toggle arrows on/off, toggle auto-rotate on/off, adjust rotation speed
+    Adjustable shadow intensity and dimming amount for side images
+    
+    Style:
+    
+    Clean, minimal, high-contrast, matching black and white brand aesthetic
+    Smooth easing on all transitions (no jarring snaps)
+    
+    Make this a standalone, reusable, fully responsive section optimized for both mobile and desktop, with all settings editable per slide.", everything is perfect except the slide per view on both mobile and desktop should be fully customizable., I should be able to enable / disable each slide. ENSURE that i can change the slides per view and its functional and optimized for both mobile and desktop , fix the mobile and desktop slides per view so when it says 3, there is actually a bit of the other slides shown next to the other photos almost like cards with the center photo or slide having the most outermost depth., make the auto play function a never ending looped carousel. 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-coverflow-slideshow-{{ ai_gen_id }} {
+    display: block;
+    position: relative;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: {{ block.settings.vertical_padding }}px 0;
+    overflow: hidden;
+  }
+
+  .ai-coverflow-container-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: {{ block.settings.center_image_height }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1200px;
+  }
+
+  .ai-coverflow-track-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .ai-coverflow-slide-{{ ai_gen_id }} {
+    position: absolute;
+    width: {{ block.settings.center_image_width }}%;
+    height: 100%;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+    cursor: pointer;
+  }
+
+  .ai-coverflow-slide-{{ ai_gen_id }}.active {
+    z-index: 10;
+    transform: translateX(0) scale(1) rotateY(0deg);
+    opacity: 1;
+    filter: brightness(1) drop-shadow(0 {{ block.settings.shadow_intensity }}px {{ block.settings.shadow_intensity | times: 2 }}px rgba(0, 0, 0, {{ block.settings.shadow_opacity }}));
+  }
+
+  .ai-coverflow-slide-{{ ai_gen_id }}.side-visible {
+    z-index: 5;
+    opacity: {{ block.settings.side_image_opacity }};
+    filter: brightness({{ block.settings.side_image_brightness }});
+  }
+
+  .ai-coverflow-slide-{{ ai_gen_id }}.hidden {
+    z-index: 1;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .ai-coverflow-slide-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: {{ block.settings.image_border_radius }}px;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .ai-coverflow-slide-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: {{ block.settings.image_border_radius }}px;
+    position: relative;
+  }
+
+  .ai-coverflow-slide-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 300px;
+    max-height: 300px;
+  }
+
+  .ai-coverflow-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-coverflow-caption-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    color: #ffffff;
+    text-align: center;
+    border-radius: 0 0 {{ block.settings.image_border_radius }}px {{ block.settings.image_border_radius }}px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-coverflow-slide-{{ ai_gen_id }}.active .ai-coverflow-caption-{{ ai_gen_id }} {
+    opacity: 1;
+  }
+
+  .ai-coverflow-caption-text-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  {% if block.settings.show_arrows %}
+  .ai-coverflow-arrow-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    width: {{ block.settings.arrow_size }}px;
+    height: {{ block.settings.arrow_size }}px;
+    border-radius: 50%;
+    background-color: {{ block.settings.arrow_background }};
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-coverflow-arrow-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.arrow_background_hover }};
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  }
+
+  .ai-coverflow-arrow-{{ ai_gen_id }}.prev {
+    left: {{ block.settings.arrow_offset }}px;
+  }
+
+  .ai-coverflow-arrow-{{ ai_gen_id }}.next {
+    right: {{ block.settings.arrow_offset }}px;
+  }
+
+  .ai-coverflow-arrow-{{ ai_gen_id }} svg {
+    width: calc({{ block.settings.arrow_size }}px * 0.4);
+    height: calc({{ block.settings.arrow_size }}px * 0.4);
+    stroke: {{ block.settings.arrow_color }};
+    stroke-width: 3;
+    fill: none;
+  }
+  {% endif %}
+
+  .ai-coverflow-dots-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
+  }
+
+  .ai-coverflow-dot-{{ ai_gen_id }} {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #d0d0d0;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+  }
+
+  .ai-coverflow-dot-{{ ai_gen_id }}.active {
+    background-color: #141414;
+    transform: scale(1.2);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-coverflow-container-{{ ai_gen_id }} {
+      height: {{ block.settings.center_image_height | times: 0.7 }}px;
+    }
+
+    .ai-coverflow-slide-{{ ai_gen_id }} {
+      width: {{ block.settings.center_image_width | times: 1.2 }}%;
+    }
+
+    {% if block.settings.show_arrows %}
+    .ai-coverflow-arrow-{{ ai_gen_id }} {
+      width: {{ block.settings.arrow_size | times: 0.8 }}px;
+      height: {{ block.settings.arrow_size | times: 0.8 }}px;
+    }
+
+    .ai-coverflow-arrow-{{ ai_gen_id }}.prev {
+      left: {{ block.settings.arrow_offset | times: 0.5 }}px;
+    }
+
+    .ai-coverflow-arrow-{{ ai_gen_id }}.next {
+      right: {{ block.settings.arrow_offset | times: 0.5 }}px;
+    }
+    {% endif %}
+
+    .ai-coverflow-caption-text-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+  }
+{% endstyle %}
+
+<coverflow-slideshow-{{ ai_gen_id }}
+  class="ai-coverflow-slideshow-{{ ai_gen_id }}"
+  data-autoplay="{{ block.settings.enable_autoplay }}"
+  data-autoplay-speed="{{ block.settings.autoplay_speed }}"
+  data-slides-per-view-desktop="{{ block.settings.slides_per_view_desktop }}"
+  data-slides-per-view-mobile="{{ block.settings.slides_per_view_mobile }}"
+  data-side-scale="{{ block.settings.side_image_scale }}"
+  data-rotation-angle="{{ block.settings.rotation_angle }}"
+  data-slide-spacing="{{ block.settings.slide_spacing }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-coverflow-container-{{ ai_gen_id }}">
+    <div class="ai-coverflow-track-{{ ai_gen_id }}">
+      {% assign slide_count = 0 %}
+      {% for i in (1..25) %}
+        {% liquid
+          assign enabled_key = 'slide_' | append: i | append: '_enabled'
+          assign image_key = 'slide_' | append: i | append: '_image'
+          assign image_mobile_key = 'slide_' | append: i | append: '_image_mobile'
+          assign caption_key = 'slide_' | append: i | append: '_caption'
+          assign link_key = 'slide_' | append: i | append: '_link'
+          
+          assign slide_enabled = block.settings[enabled_key]
+          assign slide_image = block.settings[image_key]
+          assign slide_image_mobile = block.settings[image_mobile_key]
+          assign slide_caption = block.settings[caption_key]
+          assign slide_link = block.settings[link_key]
+        %}
+
+        {% if slide_enabled and slide_image or slide_image_mobile %}
+          {% assign is_first = false %}
+          {% if slide_count == 0 %}
+            {% assign is_first = true %}
+          {% endif %}
+          
+          <div class="ai-coverflow-slide-{{ ai_gen_id }} {% if is_first %}active{% else %}hidden{% endif %}" data-slide-index="{{ slide_count }}">
+            {% if slide_link != blank %}
+              <a href="{{ slide_link }}" style="display: block; width: 100%; height: 100%;">
+            {% endif %}
+
+            {% if slide_image %}
+              <picture>
+                {% if slide_image_mobile %}
+                  <source media="(max-width: 749px)" srcset="{{ slide_image_mobile | image_url: width: 1000 }}">
+                {% endif %}
+                <img
+                  src="{{ slide_image | image_url: width: 2000 }}"
+                  alt="{{ slide_image.alt | escape }}"
+                  loading="lazy"
+                  width="{{ slide_image.width }}"
+                  height="{{ slide_image.height }}"
+                  class="ai-coverflow-slide-image-{{ ai_gen_id }}"
+                >
+              </picture>
+            {% elsif slide_image_mobile %}
+              <img
+                src="{{ slide_image_mobile | image_url: width: 1000 }}"
+                alt="{{ slide_image_mobile.alt | escape }}"
+                loading="lazy"
+                width="{{ slide_image_mobile.width }}"
+                height="{{ slide_image_mobile.height }}"
+                class="ai-coverflow-slide-image-{{ ai_gen_id }}"
+              >
+            {% endif %}
+
+            {% if slide_caption != blank %}
+              <div class="ai-coverflow-caption-{{ ai_gen_id }}">
+                <p class="ai-coverflow-caption-text-{{ ai_gen_id }}">{{ slide_caption }}</p>
+              </div>
+            {% endif %}
+
+            {% if slide_link != blank %}
+              </a>
+            {% endif %}
+          </div>
+          
+          {% assign slide_count = slide_count | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+
+      {% if slide_count == 0 %}
+        <div class="ai-coverflow-slide-{{ ai_gen_id }} active" data-slide-index="0">
+          <div class="ai-coverflow-slide-placeholder-{{ ai_gen_id }}">
+            {{ 'hero-apparel-1' | placeholder_svg_tag }}
+            <div class="ai-coverflow-empty-state-{{ ai_gen_id }}">
+              Next, enable and add images to your slides
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if block.settings.show_arrows %}
+      <button class="ai-coverflow-arrow-{{ ai_gen_id }} prev" aria-label="Previous slide">
+        <svg viewBox="0 0 24 24">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <button class="ai-coverflow-arrow-{{ ai_gen_id }} next" aria-label="Next slide">
+        <svg viewBox="0 0 24 24">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    {% endif %}
+  </div>
+
+  <div class="ai-coverflow-dots-{{ ai_gen_id }}"></div>
+</coverflow-slideshow-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class CoverflowSlideshow{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentIndex = 0;
+        this.slides = [];
+        this.autoplayInterval = null;
+        this.isPaused = false;
+        this.touchStartX = 0;
+        this.touchEndX = 0;
+        this.slidesPerViewDesktop = 3;
+        this.slidesPerViewMobile = 3;
+        this.isMobile = false;
+      }
+
+      connectedCallback() {
+        this.slides = Array.from(this.querySelectorAll('.ai-coverflow-slide-{{ ai_gen_id }}'));
+        this.track = this.querySelector('.ai-coverflow-track-{{ ai_gen_id }}');
+        this.dotsContainer = this.querySelector('.ai-coverflow-dots-{{ ai_gen_id }}');
+        
+        if (this.slides.length === 0) return;
+
+        this.slidesPerViewDesktop = parseInt(this.dataset.slidesPerViewDesktop) || 3;
+        this.slidesPerViewMobile = parseInt(this.dataset.slidesPerViewMobile) || 3;
+
+        this.updateViewportState();
+        this.setupDots();
+        this.setupEventListeners();
+        this.updateSlides();
+
+        if (this.dataset.autoplay === 'true') {
+          this.startAutoplay();
+        }
+
+        window.addEventListener('resize', () => {
+          this.updateViewportState();
+          this.updateSlides();
+        });
+      }
+
+      updateViewportState() {
+        this.isMobile = window.innerWidth <= 749;
+      }
+
+      getSlidesPerView() {
+        return this.isMobile ? this.slidesPerViewMobile : this.slidesPerViewDesktop;
+      }
+
+      setupDots() {
+        this.dotsContainer.innerHTML = '';
+        this.slides.forEach((slide, index) => {
+          const dot = document.createElement('button');
+          dot.classList.add('ai-coverflow-dot-{{ ai_gen_id }}');
+          if (index === 0) dot.classList.add('active');
+          dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
+          dot.addEventListener('click', () => this.goToSlide(index));
+          this.dotsContainer.appendChild(dot);
+        });
+      }
+
+      setupEventListeners() {
+        const prevBtn = this.querySelector('.ai-coverflow-arrow-{{ ai_gen_id }}.prev');
+        const nextBtn = this.querySelector('.ai-coverflow-arrow-{{ ai_gen_id }}.next');
+
+        if (prevBtn) {
+          prevBtn.addEventListener('click', () => this.prevSlide());
+        }
+
+        if (nextBtn) {
+          nextBtn.addEventListener('click', () => this.nextSlide());
+        }
+
+        this.slides.forEach((slide, index) => {
+          slide.addEventListener('click', (e) => {
+            if (!slide.classList.contains('active')) {
+              e.preventDefault();
+              this.goToSlide(index);
+            }
+          });
+        });
+
+        this.track.addEventListener('touchstart', (e) => {
+          this.touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        this.track.addEventListener('touchend', (e) => {
+          this.touchEndX = e.changedTouches[0].screenX;
+          this.handleSwipe();
+        }, { passive: true });
+
+        this.addEventListener('mouseenter', () => {
+          if (this.dataset.autoplay === 'true') {
+            this.pauseAutoplay();
+          }
+        });
+
+        this.addEventListener('mouseleave', () => {
+          if (this.dataset.autoplay === 'true' && this.isPaused) {
+            this.startAutoplay();
+          }
+        });
+
+        this.track.addEventListener('touchstart', () => {
+          if (this.dataset.autoplay === 'true') {
+            this.pauseAutoplay();
+          }
+        }, { passive: true });
+
+        this.track.addEventListener('touchend', () => {
+          if (this.dataset.autoplay === 'true' && this.isPaused) {
+            setTimeout(() => {
+              this.startAutoplay();
+            }, 3000);
+          }
+        }, { passive: true });
+      }
+
+      handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = this.touchStartX - this.touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+          if (diff > 0) {
+            this.nextSlide();
+          } else {
+            this.prevSlide();
+          }
+        }
+      }
+
+      updateSlides() {
+        const sideScale = parseFloat(this.dataset.sideScale) || 0.8;
+        const rotationAngle = parseFloat(this.dataset.rotationAngle) || 25;
+        const slideSpacing = parseFloat(this.dataset.slideSpacing) || 40;
+        
+        const slidesPerView = this.getSlidesPerView();
+        const sidesPerSide = Math.floor((slidesPerView - 1) / 2);
+
+        this.slides.forEach((slide, index) => {
+          slide.classList.remove('active', 'side-visible', 'hidden');
+          
+          const diff = index - this.currentIndex;
+          const absDiff = Math.abs(diff);
+
+          if (index === this.currentIndex) {
+            slide.classList.add('active');
+            slide.style.transform = 'translateX(0) scale(1) rotateY(0deg)';
+            slide.style.zIndex = 10;
+            slide.style.opacity = 1;
+          } else if (absDiff <= sidesPerSide) {
+            slide.classList.add('side-visible');
+            
+            const position = diff > 0 ? 1 : -1;
+            const scaleReduction = Math.pow(sideScale, absDiff);
+            const rotation = position * rotationAngle * absDiff;
+            const baseOffset = 60;
+            const translateX = position * baseOffset * absDiff;
+            
+            slide.style.transform = `translateX(${translateX}%) scale(${scaleReduction}) rotateY(${rotation}deg)`;
+            slide.style.zIndex = 10 - absDiff;
+            slide.style.opacity = '';
+          } else {
+            slide.classList.add('hidden');
+            
+            const position = diff > 0 ? 1 : -1;
+            const scaleReduction = Math.pow(sideScale, sidesPerSide + 1);
+            const rotation = position * rotationAngle * (sidesPerSide + 1);
+            const baseOffset = 60;
+            const translateX = position * baseOffset * (sidesPerSide + 1);
+            
+            slide.style.transform = `translateX(${translateX}%) scale(${scaleReduction}) rotateY(${rotation}deg)`;
+            slide.style.zIndex = 0;
+            slide.style.opacity = 0;
+          }
+        });
+
+        this.updateDots();
+      }
+
+      updateDots() {
+        const dots = this.dotsContainer.querySelectorAll('.ai-coverflow-dot-{{ ai_gen_id }}');
+        dots.forEach((dot, index) => {
+          if (index === this.currentIndex) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
+          }
+        });
+      }
+
+      prevSlide() {
+        this.currentIndex = this.currentIndex === 0 ? this.slides.length - 1 : this.currentIndex - 1;
+        this.updateSlides();
+      }
+
+      nextSlide() {
+        this.currentIndex = this.currentIndex === this.slides.length - 1 ? 0 : this.currentIndex + 1;
+        this.updateSlides();
+      }
+
+      goToSlide(index) {
+        this.currentIndex = index;
+        this.updateSlides();
+        if (this.dataset.autoplay === 'true' && !this.isPaused) {
+          this.pauseAutoplay();
+          this.startAutoplay();
+        }
+      }
+
+      startAutoplay() {
+        this.isPaused = false;
+        const speed = parseInt(this.dataset.autoplaySpeed) || 5000;
+        
+        if (this.autoplayInterval) {
+          clearInterval(this.autoplayInterval);
+        }
+        
+        this.autoplayInterval = setInterval(() => {
+          this.nextSlide();
+        }, speed);
+      }
+
+      pauseAutoplay() {
+        this.isPaused = true;
+        if (this.autoplayInterval) {
+          clearInterval(this.autoplayInterval);
+          this.autoplayInterval = null;
+        }
+      }
+
+      disconnectedCallback() {
+        if (this.autoplayInterval) {
+          clearInterval(this.autoplayInterval);
+        }
+      }
+    }
+
+    customElements.define('coverflow-slideshow-{{ ai_gen_id }}', CoverflowSlideshow{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Coverflow slideshow",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "center_image_height",
+      "label": "Center image height",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "center_image_width",
+      "label": "Center image width",
+      "min": 40,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "vertical_padding",
+      "label": "Vertical padding",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image border radius",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Slides per view"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_desktop",
+      "label": "Desktop slides per view",
+      "min": 1,
+      "max": 7,
+      "step": 2,
+      "default": 3,
+      "info": "Number of slides visible at once on desktop (1, 3, 5, or 7)"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_mobile",
+      "label": "Mobile slides per view",
+      "min": 1,
+      "max": 5,
+      "step": 2,
+      "default": 3,
+      "info": "Number of slides visible at once on mobile (1, 3, or 5)"
+    },
+    {
+      "type": "header",
+      "content": "Coverflow effect"
+    },
+    {
+      "type": "range",
+      "id": "side_image_scale",
+      "label": "Side image scale",
+      "min": 0.5,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.8
+    },
+    {
+      "type": "range",
+      "id": "side_image_opacity",
+      "label": "Side image opacity",
+      "min": 0.3,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.6
+    },
+    {
+      "type": "range",
+      "id": "side_image_brightness",
+      "label": "Side image brightness",
+      "min": 0.5,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.7
+    },
+    {
+      "type": "range",
+      "id": "rotation_angle",
+      "label": "Rotation angle",
+      "min": 0,
+      "max": 45,
+      "step": 5,
+      "unit": "deg",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "slide_spacing",
+      "label": "Spacing between slides",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "shadow_intensity",
+      "label": "Shadow size",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "shadow_opacity",
+      "label": "Shadow opacity",
+      "min": 0.1,
+      "max": 0.5,
+      "step": 0.1,
+      "default": 0.3
+    },
+    {
+      "type": "header",
+      "content": "Navigation arrows"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show arrows",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "arrow_size",
+      "label": "Arrow size",
+      "min": 30,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "arrow_offset",
+      "label": "Arrow offset from edge",
+      "min": 10,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "color",
+      "id": "arrow_background",
+      "label": "Arrow background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "arrow_background_hover",
+      "label": "Arrow background hover",
+      "default": "#f4f4f4"
+    },
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Arrow icon color",
+      "default": "#141414"
+    },
+    {
+      "type": "header",
+      "content": "Autoplay"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_autoplay",
+      "label": "Enable autoplay",
+      "default": false,
+      "info": "Carousel will loop continuously when enabled"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Autoplay speed",
+      "min": 2000,
+      "max": 9000,
+      "step": 500,
+      "unit": "ms",
+      "default": 5000
+    },
+    {
+      "type": "header",
+      "content": "Slide 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_1_enabled",
+      "label": "Enable slide 1",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_1_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_1_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_1_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_2_enabled",
+      "label": "Enable slide 2",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_2_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_2_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_2_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_3_enabled",
+      "label": "Enable slide 3",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_3_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_3_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_3_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_3_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_4_enabled",
+      "label": "Enable slide 4",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_4_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_4_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_4_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_4_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_5_enabled",
+      "label": "Enable slide 5",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_5_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_5_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_5_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_5_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 6"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_6_enabled",
+      "label": "Enable slide 6",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_6_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_6_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_6_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_6_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 7"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_7_enabled",
+      "label": "Enable slide 7",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_7_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_7_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_7_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_7_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 8"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_8_enabled",
+      "label": "Enable slide 8",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_8_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_8_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_8_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_8_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 9"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_9_enabled",
+      "label": "Enable slide 9",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_9_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_9_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_9_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_9_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 10"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_10_enabled",
+      "label": "Enable slide 10",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_10_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_10_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_10_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_10_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 11"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_11_enabled",
+      "label": "Enable slide 11",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_11_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_11_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_11_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_11_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 12"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_12_enabled",
+      "label": "Enable slide 12",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_12_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_12_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_12_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_12_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 13"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_13_enabled",
+      "label": "Enable slide 13",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_13_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_13_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_13_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_13_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 14"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_14_enabled",
+      "label": "Enable slide 14",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_14_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_14_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_14_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_14_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 15"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_15_enabled",
+      "label": "Enable slide 15",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_15_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_15_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_15_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_15_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 16"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_16_enabled",
+      "label": "Enable slide 16",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_16_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_16_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_16_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_16_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 17"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_17_enabled",
+      "label": "Enable slide 17",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_17_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_17_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_17_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_17_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 18"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_18_enabled",
+      "label": "Enable slide 18",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_18_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_18_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_18_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_18_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 19"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_19_enabled",
+      "label": "Enable slide 19",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_19_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_19_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_19_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_19_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 20"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_20_enabled",
+      "label": "Enable slide 20",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_20_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_20_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_20_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_20_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 21"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_21_enabled",
+      "label": "Enable slide 21",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_21_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_21_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_21_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_21_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 22"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_22_enabled",
+      "label": "Enable slide 22",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_22_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_22_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_22_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_22_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 23"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_23_enabled",
+      "label": "Enable slide 23",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_23_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_23_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_23_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_23_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 24"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_24_enabled",
+      "label": "Enable slide 24",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_24_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_24_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_24_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_24_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 25"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_25_enabled",
+      "label": "Enable slide 25",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_25_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_25_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "slide_25_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "slide_25_link",
+      "label": "Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Coverflow slideshow"
+    }
+  ]
+}
+{% endschema %}

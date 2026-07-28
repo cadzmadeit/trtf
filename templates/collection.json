@@ -1,0 +1,97 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "",
+        "overlay_opacity": 12,
+        "section_layout": "full",
+        "add_word": "Collection",
+        "show_word": false,
+        "show_collection_description": true,
+        "description_products": "",
+        "image_size": "medium",
+        "show_collection_image": false,
+        "margin_top": "s",
+        "margin_bottom": "xs",
+        "padding_top": "no-indent",
+        "padding_bottom": "no-indent"
+      }
+    },
+    "slideshow_U9KLUB": {
+      "type": "slideshow",
+      "blocks": {
+        "slideshow_item_iWPW96": {
+          "type": "slideshow_item",
+          "settings": {
+            "color_scheme": "",
+            "badge": "",
+            "heading": "",
+            "text": "",
+            "primary_button_label": "",
+            "primary_button_link": "",
+            "primary_button_style": "primary",
+            "secondary_button_label": "",
+            "secondary_button_link": "",
+            "overlay_opacity": 30
+          }
+        }
+      },
+      "block_order": [
+        "slideshow_item_iWPW96"
+      ],
+      "disabled": true,
+      "settings": {
+        "section_layout": "overlay",
+        "section_size": "container",
+        "content_alignment": "center",
+        "image_size": "21/9",
+        "is_autoplay": false,
+        "is_hover_stop_autoplay": true,
+        "show_arrows": true,
+        "show_bullets": true,
+        "slideshow_speed": 1.1,
+        "slideshow_delay": 3,
+        "slide_effects": "slide",
+        "margin_top": "no-indent",
+        "margin_bottom": "no-indent"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "settings": {
+        "products_per_page": 23,
+        "per_row": 5,
+        "show_two_cards": true,
+        "show_secondary_image": true,
+        "show_sku": false,
+        "show_vendor": false,
+        "show_collection_name": false,
+        "show_desc": false,
+        "show_color_swatch": false,
+        "image_ratio": "square",
+        "image_fit": "contain",
+        "enable_filtering": false,
+        "filter_type": "vertical",
+        "enable_sorting": false,
+        "padding_top": "m",
+        "padding_bottom": "m"
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "slideshow_U9KLUB",
+    "product-grid"
+  ]
+}
