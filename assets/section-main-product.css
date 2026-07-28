@@ -1944,34 +1944,37 @@ fieldset.product-form__input {
 /* --- Custom Reference Layout Overrides --- */
 @media screen and (max-width: 990px) {
   /* 1. Make product image edge-to-edge */
-  .section-main-product-padding.container {
+  #MainProduct-main.container,
+  #MainProduct-main .container,
+  .section-main-product-padding {
     padding-left: 0 !important;
     padding-right: 0 !important;
+    max-width: 100% !important;
   }
   
-  .product__info-wrapper {
+  #MainProduct-main .product__info-wrapper {
     padding-left: 2rem !important;
     padding-right: 2rem !important;
   }
   
   /* 2. Enable and style mobile thumbnails */
-  .product__media-sublist,
-  .product__media-list-wrapper.product__media-list-wrapper-mobile .product__media-subitem {
+  #MainProduct-main .product__media-sublist,
+  #MainProduct-main .product__media-list-wrapper.product__media-list-wrapper-mobile .product__media-subitem {
     display: block !important;
     opacity: 1 !important;
   }
   
-  .product__media-list-wrapper.product__media-list-wrapper-mobile {
+  #MainProduct-main .product__media-list-wrapper.product__media-list-wrapper-mobile {
     flex-direction: column !important;
   }
   
-  .product__media-sublist {
+  #MainProduct-main .product__media-sublist {
     order: 2 !important; /* Move under main image */
     margin-top: 15px !important;
   }
   
   /* Make thumbnails a horizontal scrollable row */
-  .product__media-sublist .swiper-wrapper {
+  #MainProduct-main .product__media-sublist .swiper-wrapper {
     display: flex !important;
     flex-direction: row !important;
     gap: 10px !important;
@@ -1980,24 +1983,33 @@ fieldset.product-form__input {
     scrollbar-width: none;
     flex-wrap: nowrap !important;
   }
-  .product__media-sublist .swiper-wrapper::-webkit-scrollbar {
+  
+  #MainProduct-main .product__media-sublist .swiper-wrapper::-webkit-scrollbar {
     display: none;
   }
   
-  .product__media-subitem {
+  #MainProduct-main .product__media-subitem {
     flex: 0 0 calc(20% - 8px) !important;
     margin-bottom: 0 !important;
     height: auto !important;
     padding: 0 !important;
   }
   
-  .product__media-subitem .product__media {
+  #MainProduct-main .product__media-subitem .product__media {
     padding-top: 100% !important;
   }
   
   /* 3. Hide side arrows and pagination fraction on main image */
-  .product__media-list .swiper-btn,
-  .product__media-list .swiper-pagination-fraction {
+  #MainProduct-main .product__media-list .swiper-btn,
+  #MainProduct-main .swiper-pagination-fraction,
+  #MainProduct-main .product__button-prev,
+  #MainProduct-main .product__button-next,
+  #MainProduct-main .swiper-pagination {
     display: none !important;
+  }
+  
+  /* Fix main image height */
+  #MainProduct-main .product__media-list .product__media {
+    padding-top: 100% !important; 
   }
 }
