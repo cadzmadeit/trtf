@@ -9,6 +9,14 @@
  */
 {
   "sections": {
+    "product-perks-banner": {
+      "type": "product-perks-banner",
+      "settings": {
+        "banner_text": "Worldwide Shipping | 14-Day Returns",
+        "bg_color": "#f4f4f4",
+        "text_color": "#000000"
+      }
+    },
     "main": {
       "type": "main-product",
       "blocks": {
@@ -66,6 +74,7 @@
         },
         "accordion_returns": {
           "type": "about",
+          "disabled": true,
           "settings": {
             "about_heading": "Returns & Exchanges",
             "about_heading_content": "<p>Due to high demand, all sales are final at this time. Unless the item sent is flawed or sent in the wrong size. Please review your order carefully before purchasing.</p>"
@@ -73,6 +82,7 @@
         },
         "accordion_size": {
           "type": "about",
+          "disabled": true,
           "settings": {
             "about_heading": "Size Guide",
             "about_heading_content": "<p>Refer to the \"<strong>Try it on</strong>\" feature for the perfect sizing! True to size fit. If between sizes, we recommend sizing up.</p>"
@@ -229,14 +239,6 @@
     "1760734635c0b9266f": {
       "type": "_blocks",
       "settings": {}
-    },
-    "product-perks-banner": {
-      "type": "product-perks-banner",
-      "settings": {
-        "banner_text": "Worldwide Shipping | 14-Day Returns",
-        "bg_color": "#f4f4f4",
-        "text_color": "#000000"
-      }
     }
   },
   "order": [
