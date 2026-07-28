@@ -1962,9 +1962,13 @@ fieldset.product-form__input {
     margin-top: 15px !important;
   }
   
-  /* Keep thumbnail aspect ratio */
+  /* Keep thumbnail aspect ratio and width */
   .product__media-subitem .product__media {
     padding-top: 100% !important;
+  }
+  .product__media-sublist .product__media-subitem {
+    width: 22% !important;
+    margin-right: 8px !important;
   }
 
   /* Hide arrows and fractions */
