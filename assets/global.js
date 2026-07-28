@@ -18,7 +18,7 @@ function getSliderSettings() {
 function getSubSliderProductSettings() {
 	return {
 		slidesPerView: "auto",
-		direction: "vertical",
+		direction: window.innerWidth > 990 ? "vertical" : "horizontal",
 		navigation: false,
 	};
 }
