@@ -1086,6 +1086,82 @@ customElements.define('product-recommendations--single', ProductRecommendations)
 	<script src="{{ 'product-model.js' | asset_url }}" defer></script>
 {%- endif -%}
 
+
+<style>
+/* --- Custom Reference Layout Overrides --- */
+@media screen and (max-width: 990px) {
+  /* 1. Make product image edge-to-edge */
+  #MainProduct-{{ section.id }}.container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    max-width: 100% !important;
+  }
+  
+  #MainProduct-{{ section.id }} .product__info-wrapper {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  
+  /* 2. Enable and style mobile thumbnails */
+  #MainProduct-{{ section.id }} .product__media-sublist,
+  #MainProduct-{{ section.id }} .product__media-list-wrapper .product__media-subitem {
+    display: block !important;
+    opacity: 1 !important;
+  }
+  
+  #MainProduct-{{ section.id }} .product__media-list-wrapper {
+    flex-direction: column !important;
+    display: flex !important;
+  }
+  
+  #MainProduct-{{ section.id }} .product__media-sublist {
+    order: 2 !important; /* Move under main image */
+    margin-top: 15px !important;
+  }
+  
+  /* Make thumbnails a horizontal scrollable row */
+  #MainProduct-{{ section.id }} .product__media-sublist .swiper-wrapper {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    overflow-x: auto !important;
+    padding: 0 20px !important;
+    scrollbar-width: none;
+    flex-wrap: nowrap !important;
+  }
+  
+  #MainProduct-{{ section.id }} .product__media-sublist .swiper-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+  
+  #MainProduct-{{ section.id }} .product__media-subitem {
+    flex: 0 0 calc(20% - 8px) !important;
+    margin-bottom: 0 !important;
+    height: auto !important;
+    padding: 0 !important;
+  }
+  
+  #MainProduct-{{ section.id }} .product__media-subitem .product__media {
+    padding-top: 100% !important; /* keep thumbnails square */
+  }
+  
+  /* 3. Hide side arrows and pagination fraction on main image */
+  #MainProduct-{{ section.id }} .swiper-btn,
+  #MainProduct-{{ section.id }} .swiper-pagination-fraction,
+  #MainProduct-{{ section.id }} .product__button-prev,
+  #MainProduct-{{ section.id }} .product__button-next,
+  #MainProduct-{{ section.id }} .swiper-pagination,
+  .swiper-pagination-fraction {
+    display: none !important;
+  }
+  
+  /* Revert main image padding constraint so it keeps original taller ratio */
+  #MainProduct-{{ section.id }} .product__media-list .product__media {
+    padding-top: 125% !important; /* 4:5 ratio for taller images */
+  }
+}
+</style>
+
 {% schema %}
 {
   "name": "t:sections.main-product.name",
@@ -1508,77 +1584,3 @@ customElements.define('product-recommendations--single', ProductRecommendations)
 
 {% endschema %}
 
-<style>
-/* --- Custom Reference Layout Overrides --- */
-@media screen and (max-width: 990px) {
-  /* 1. Make product image edge-to-edge */
-  #MainProduct-{{ section.id }}.container {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    max-width: 100% !important;
-  }
-  
-  #MainProduct-{{ section.id }} .product__info-wrapper {
-    padding-left: 20px !important;
-    padding-right: 20px !important;
-  }
-  
-  /* 2. Enable and style mobile thumbnails */
-  #MainProduct-{{ section.id }} .product__media-sublist,
-  #MainProduct-{{ section.id }} .product__media-list-wrapper .product__media-subitem {
-    display: block !important;
-    opacity: 1 !important;
-  }
-  
-  #MainProduct-{{ section.id }} .product__media-list-wrapper {
-    flex-direction: column !important;
-    display: flex !important;
-  }
-  
-  #MainProduct-{{ section.id }} .product__media-sublist {
-    order: 2 !important; /* Move under main image */
-    margin-top: 15px !important;
-  }
-  
-  /* Make thumbnails a horizontal scrollable row */
-  #MainProduct-{{ section.id }} .product__media-sublist .swiper-wrapper {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 10px !important;
-    overflow-x: auto !important;
-    padding: 0 20px !important;
-    scrollbar-width: none;
-    flex-wrap: nowrap !important;
-  }
-  
-  #MainProduct-{{ section.id }} .product__media-sublist .swiper-wrapper::-webkit-scrollbar {
-    display: none;
-  }
-  
-  #MainProduct-{{ section.id }} .product__media-subitem {
-    flex: 0 0 calc(20% - 8px) !important;
-    margin-bottom: 0 !important;
-    height: auto !important;
-    padding: 0 !important;
-  }
-  
-  #MainProduct-{{ section.id }} .product__media-subitem .product__media {
-    padding-top: 100% !important; /* keep thumbnails square */
-  }
-  
-  /* 3. Hide side arrows and pagination fraction on main image */
-  #MainProduct-{{ section.id }} .swiper-btn,
-  #MainProduct-{{ section.id }} .swiper-pagination-fraction,
-  #MainProduct-{{ section.id }} .product__button-prev,
-  #MainProduct-{{ section.id }} .product__button-next,
-  #MainProduct-{{ section.id }} .swiper-pagination,
-  .swiper-pagination-fraction {
-    display: none !important;
-  }
-  
-  /* Revert main image padding constraint so it keeps original taller ratio */
-  #MainProduct-{{ section.id }} .product__media-list .product__media {
-    padding-top: 125% !important; /* 4:5 ratio for taller images */
-  }
-}
-</style>
